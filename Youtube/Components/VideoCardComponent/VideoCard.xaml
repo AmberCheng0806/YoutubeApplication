@@ -1,0 +1,204 @@
+﻿<UserControl x:Class="Youtube.Components.VideoCardComponent.VideoCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Youtube.Components.VideoCardComponent"
+             xmlns:conv="clr-namespace:Youtube.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="320" d:DesignWidth="360">
+
+    <UserControl.Resources>
+        <conv:TimeAgoConverter x:Key="TimeAgoConverter"/>
+        <conv:ViewCountConverter x:Key="ViewCountConverter"/>
+
+        <!-- 卡片容器樣式 -->
+        <Style x:Key="VideoCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                               To="1.02"
+                                               Duration="0:0:0.2">
+                                    <DoubleAnimation.EasingFunction>
+                                        <CubicEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                               To="1.02"
+                                               Duration="0:0:0.2">
+                                    <DoubleAnimation.EasingFunction>
+                                        <CubicEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                               To="1"
+                                               Duration="0:0:0.2">
+                                    <DoubleAnimation.EasingFunction>
+                                        <CubicEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                               To="1"
+                                               Duration="0:0:0.2">
+                                    <DoubleAnimation.EasingFunction>
+                                        <CubicEase EasingMode="EaseOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.ExitActions>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource VideoCardStyle}" 
+            Width="360" 
+            Padding="0"
+            RenderTransformOrigin="0.5,0.5">
+        <Border.RenderTransform>
+            <ScaleTransform ScaleX="1" ScaleY="1"/>
+        </Border.RenderTransform>
+
+        <Border.Effect>
+            <DropShadowEffect Color="Black" 
+                            Opacity="0" 
+                            BlurRadius="0" 
+                            ShadowDepth="0"
+                            x:Name="CardShadow"/>
+        </Border.Effect>
+
+        <StackPanel Background="Transparent">
+            <!-- 縮圖容器 -->
+            <Border CornerRadius="12" 
+                    Background="#1F1F1F"
+                    Height="202"
+                    ClipToBounds="True">
+                <Grid>
+                    <Image Source="{Binding url}"
+                           Stretch="UniformToFill"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+                    <!-- 載入中的佔位符 -->
+                    <Border Background="#272727" x:Name="LoadingPlaceholder">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding url}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding url}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="📹" 
+                                   FontSize="48" 
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"
+                                   Foreground="#505050"/>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- 影片資訊 -->
+            <StackPanel Margin="0,12,0,0">
+                <!-- 標題 -->
+                <TextBlock Text="{Binding title}"
+                           Foreground="#F1F1F1"
+                           FontSize="14"
+                           FontWeight="Medium"
+                           TextWrapping="Wrap"
+                           MaxHeight="40"
+                           LineHeight="20"
+                           TextTrimming="CharacterEllipsis"
+                           Margin="0,0,0,8">
+                    <TextBlock.ToolTip>
+                        <ToolTip Content="{Binding title}" 
+                                 Background="#272727" 
+                                 Foreground="#F1F1F1"
+                                 BorderBrush="#404040"
+                                 Padding="8"/>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+
+                <!-- 頻道名稱 -->
+                <TextBlock Text="{Binding channelTitle}"
+                           Foreground="#AAAAAA"
+                           FontSize="12"
+                           Margin="0,0,0,4"/>
+
+                <!-- 觀看次數和發布時間 -->
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Foreground="#AAAAAA" FontSize="12">
+                        <Run Text="{Binding viewCount, Converter={StaticResource ViewCountConverter}}"/>
+                        <Run Text="次觀看"/>
+                    </TextBlock>
+
+                    <TextBlock Text="•" 
+                               Foreground="#AAAAAA" 
+                               FontSize="12" 
+                               Margin="6,0"/>
+
+                    <TextBlock Text="{Binding publishedAt, Converter={StaticResource TimeAgoConverter}}"
+                               Foreground="#AAAAAA"
+                               FontSize="12"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="MouseEnter">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                   Storyboard.TargetProperty="Opacity"
+                                   To="0.3"
+                                   Duration="0:0:0.2"/>
+                    <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                   Storyboard.TargetProperty="BlurRadius"
+                                   To="20"
+                                   Duration="0:0:0.2"/>
+                    <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                   Storyboard.TargetProperty="ShadowDepth"
+                                   To="5"
+                                   Duration="0:0:0.2"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="MouseLeave">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                   Storyboard.TargetProperty="Opacity"
+                                   To="0"
+                                   Duration="0:0:0.2"/>
+                    <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                   Storyboard.TargetProperty="BlurRadius"
+                                   To="0"
+                                   Duration="0:0:0.2"/>
+                    <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                   Storyboard.TargetProperty="ShadowDepth"
+                                   To="0"
+                                   Duration="0:0:0.2"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+</UserControl>
