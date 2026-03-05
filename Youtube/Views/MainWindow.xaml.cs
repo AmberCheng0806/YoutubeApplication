@@ -16,9 +16,12 @@ using System.Windows.Shapes;
 using Youtube.Components.SearchFilterComponent;
 using Youtube.Components.VideoCardComponent;
 using Youtube.Presenters.Models;
+using Youtube.Utility;
+using Youtube.Utility.Service;
+using Youtube.Views.Pages.VideoPages;
 using YoutubeAPI;
 using YoutubeAPI.Video;
-
+using NavigationService = Youtube.Utility.Service.NavigationService;
 namespace Youtube.Views
 {
     /// <summary>
@@ -26,11 +29,13 @@ namespace Youtube.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        MainWindowContext MainWindowView { get; set; } = new MainWindowContext();
+        MainWindowContext MainWindowView { get; set; }
         public MainWindow()
         {
             InitializeComponent();
 
+            App.NavigationService = new NavigationService(PageContainer);
+            MainWindowView = new MainWindowContext(App.NavigationService);
             DataContext = MainWindowView;
         }
     }

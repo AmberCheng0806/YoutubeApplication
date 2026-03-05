@@ -318,11 +318,14 @@
                           Margin="0,0,8,0"/>
 
                 <ComboBox ItemsSource="{Binding CountPerPageOptions}"
-                          SelectedValue="{Binding CountPerPage}"
-                          Style="{StaticResource ModernComboBoxStyle}">
+                          Style="{StaticResource ModernComboBoxStyle}"
+                          SelectedIndex="0"
+                          SelectedItem="5"
+                          >
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding ChangeCountPerPageCommand}"/>
+                            <i:InvokeCommandAction Command="{Binding ChangeCountPerPageCommand}"
+                                                   CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </ComboBox>

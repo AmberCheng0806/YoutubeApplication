@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Youtube.Components.SearchFilterComponent;
 using Youtube.Utility;
 
 namespace Youtube.Components.PaginationComponent
@@ -24,88 +25,53 @@ namespace Youtube.Components.PaginationComponent
     [AddINotifyPropertyChangedInterface]
     public partial class Pagination : UserControl
     {
-        //public int TotalCount { get; set; } = 173;
-        //public int PageCount { get; set; }
-        //public int PageIndex { get; set; } = 1;
-        //public int DisplayPageNumber { get; set; } = 10;
-        //public int CountPerPage { get; set; } = 5;
-        //public ObservableCollection<Page> Pages { get; set; } = new ObservableCollection<Page>();
-        //public ObservableCollection<int> CountPerPageOptions { get; set; } = new ObservableCollection<int>() { 5, 10, 15, 20 };
-
-        //[DependsOn(nameof(PageIndex))]
-        //public bool HasPreviousPage => PageIndex != 1;
-
-        //[DependsOn(nameof(PageIndex), nameof(PageCount))]
-        //public bool HasNextPage => PageIndex < PageCount;
-        //public int StartPage { get; set; }
-        //public int EndPage { get; set; }
-
-        //[DependsOn(nameof(PageIndex))]
-        //public bool CanRenderPages => (StartPage > PageIndex || PageIndex > EndPage);
-        //public ICommand PrevPageCommand { get; }
-        //public ICommand NextPageCommand { get; }
-        //public ICommand JumpPrevPageCommand { get; }
-        //public ICommand JumpNextPageCommand { get; }
-        //public ICommand ChangePageCommand { get; }
-        //public ICommand ChangeCountPerPageCommand { get; }
+        PaginationContext PaginationContext { get; set; }
         public Pagination()
         {
             InitializeComponent();
-            DataContext = new PaginationContext();
-
-            //CreatePages();
-
-            //PrevPageCommand = new RelayCommand(() =>
-            //{
-            //    if (HasPreviousPage) PageIndex--;
-            //    ResetPageIsActive();
-            //    if (CanRenderPages) CreatePages();
-            //});
-            //NextPageCommand = new RelayCommand(() =>
-            //{
-            //    if (HasNextPage) PageIndex++;
-            //    ResetPageIsActive();
-            //    if (CanRenderPages) CreatePages();
-            //});
-            //JumpPrevPageCommand = new RelayCommand(() =>
-            //{
-            //    if (HasPreviousPage) PageIndex = Math.Max(1, PageIndex - 10);
-            //    ResetPageIsActive();
-            //    if (CanRenderPages) CreatePages();
-            //});
-            //JumpNextPageCommand = new RelayCommand(() =>
-            //{
-            //    if (HasNextPage) PageIndex = Math.Min(PageCount, PageIndex + 10);
-            //    ResetPageIsActive();
-            //    if (CanRenderPages) CreatePages();
-            //});
-            //ChangePageCommand = new RelayCommand<int>(x => { PageIndex = x; ResetPageIsActive(); });
-            //ChangeCountPerPageCommand = new RelayCommand(() => CreatePages());
+            PaginationContext = new PaginationContext(this);
+            DataContext = PaginationContext;
         }
 
-        //private void CreatePages()
-        //{
-        //    Pages.Clear();
-        //    int page = (int)Math.Ceiling((double)(TotalCount / (CountPerPage * 1.0)));
-        //    PageCount = page;
-        //    PageIndex = Math.Min(PageCount, PageIndex);
-        //    int start = (int)(Math.Floor((double)((PageIndex - 1) / DisplayPageNumber)) * DisplayPageNumber + 1);
-        //    int end = start + DisplayPageNumber - 1;
-        //    end = end >= page ? page : end;
-        //    StartPage = start;
-        //    EndPage = end;
-        //    for (int i = start; i <= end; i++)
-        //    {
-        //        Pages.Add(new Page(i, false));
-        //    }
-        //    Pages[PageIndex - start].IsActived = true;
-        //}
-        //private void ResetPageIsActive()
-        //{
-        //    foreach (Page page in Pages)
-        //    {
-        //        page.IsActived = page.Number == PageIndex;
-        //    }
-        //}
+        public ICommand Command
+        {
+            get => (ICommand)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
+        }
+
+        public int TotalCount
+        {
+            get => (int)GetValue(CommandProperty2);
+            set
+            {
+                SetValue(CommandProperty2, value);
+                //PaginationContext.TotalCount = value;
+            }
+        }
+
+        public static readonly DependencyProperty CommandProperty =
+            DependencyProperty.Register(
+                nameof(Command),
+                typeof(ICommand),
+                typeof(Pagination),
+                new PropertyMetadata(null));
+
+
+        public static readonly DependencyProperty CommandProperty2 =
+            DependencyProperty.Register(
+                nameof(TotalCount),
+                typeof(int),
+                typeof(Pagination),
+                new PropertyMetadata((d, e) =>
+                {
+                    Pagination component = (Pagination)d;
+                    component.PaginationContext.TotalCount = (int)e.NewValue;
+                }));
+
+        public void Execute(PaginationDTO condition)
+        {
+            Command.Execute(condition);
+        }
     }
 }
+

@@ -6,18 +6,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Youtube.Presenters;
 using Youtube.Utility;
+using static Youtube.Contracts.PaginationContract;
 
 namespace Youtube.Components.PaginationComponent
 {
     [AddINotifyPropertyChangedInterface]
-    internal class PaginationContext
+    internal class PaginationContext : IPaginationView
     {
-        public int TotalCount { get; set; } = 173;
-        public int PageCount { get; set; }
+        private IPaginationPresenter presenter;
+        private Pagination Pagination { get; set; }
         public int PageIndex { get; set; } = 1;
-        public int DisplayPageNumber { get; set; } = 10;
+
         public int CountPerPage { get; set; } = 5;
+        public int PageCount { get; set; }
+        public int TotalCount
+        {
+            set
+            {
+                presenter.CreatePagesRequest(CountPerPage, value);
+            }
+        }
+
         public ObservableCollection<Page> Pages { get; set; } = new ObservableCollection<Page>();
         public ObservableCollection<int> CountPerPageOptions { get; set; } = new ObservableCollection<int>() { 5, 10, 15, 20 };
 
@@ -26,11 +37,6 @@ namespace Youtube.Components.PaginationComponent
 
         [DependsOn(nameof(PageIndex), nameof(PageCount))]
         public bool HasNextPage => PageIndex < PageCount;
-        public int StartPage { get; set; }
-        public int EndPage { get; set; }
-
-        [DependsOn(nameof(PageIndex))]
-        public bool CanRenderPages => (StartPage > PageIndex || PageIndex > EndPage);
         public ICommand PrevPageCommand { get; }
         public ICommand NextPageCommand { get; }
         public ICommand JumpPrevPageCommand { get; }
@@ -38,60 +44,57 @@ namespace Youtube.Components.PaginationComponent
         public ICommand ChangePageCommand { get; }
         public ICommand ChangeCountPerPageCommand { get; }
 
+        public PaginationContext(Pagination pagination)
+        {
+            presenter = new PaginationPresenter(this);
+            Pagination = pagination;
+
+            PrevPageCommand = new RelayCommand(presenter.PrevPageRequest, () => HasPreviousPage);
+            NextPageCommand = new RelayCommand(presenter.NextPageRequest, () => HasNextPage);
+            JumpPrevPageCommand = new RelayCommand(presenter.JumpPrevPageRequest, () => HasPreviousPage);
+            JumpNextPageCommand = new RelayCommand(presenter.JumpNextPageRequest, () => HasNextPage);
+            ChangePageCommand = new RelayCommand<int>(x => { presenter.ChangePageRequest(x); });
+            ChangeCountPerPageCommand = new RelayCommand<int>(x =>
+            {
+                CountPerPage = x;
+                presenter.ChangeCountPerPageRequest(x);
+            });
+        }
+
         public PaginationContext()
         {
-            CreatePages();
+            presenter = new PaginationPresenter(this);
 
-            PrevPageCommand = new RelayCommand(() =>
+            PrevPageCommand = new RelayCommand(presenter.PrevPageRequest, () => HasPreviousPage);
+            NextPageCommand = new RelayCommand(presenter.NextPageRequest, () => HasNextPage);
+            JumpPrevPageCommand = new RelayCommand(presenter.JumpPrevPageRequest, () => HasPreviousPage);
+            JumpNextPageCommand = new RelayCommand(presenter.JumpNextPageRequest, () => HasNextPage);
+            ChangePageCommand = new RelayCommand<int>(x => { presenter.ChangePageRequest(x); });
+            ChangeCountPerPageCommand = new RelayCommand<int>(x =>
             {
-                if (HasPreviousPage) PageIndex--;
-                ResetPageIsActive();
-                if (CanRenderPages) CreatePages();
+                CountPerPage = x;
+                presenter.ChangeCountPerPageRequest(x);
             });
-            NextPageCommand = new RelayCommand(() =>
-            {
-                if (HasNextPage) PageIndex++;
-                ResetPageIsActive();
-                if (CanRenderPages) CreatePages();
-            });
-            JumpPrevPageCommand = new RelayCommand(() =>
-            {
-                if (HasPreviousPage) PageIndex = Math.Max(1, PageIndex - 10);
-                ResetPageIsActive();
-                if (CanRenderPages) CreatePages();
-            });
-            JumpNextPageCommand = new RelayCommand(() =>
-            {
-                if (HasNextPage) PageIndex = Math.Min(PageCount, PageIndex + 10);
-                ResetPageIsActive();
-                if (CanRenderPages) CreatePages();
-            });
-            ChangePageCommand = new RelayCommand<int>(x => { PageIndex = x; ResetPageIsActive(); });
-            ChangeCountPerPageCommand = new RelayCommand(() => CreatePages());
         }
-        private void CreatePages()
+
+        public void RenderPages(List<Page> pages)
         {
-            Pages.Clear();
-            int page = (int)Math.Ceiling((double)(TotalCount / (CountPerPage * 1.0)));
-            PageCount = page;
-            PageIndex = Math.Min(PageCount, PageIndex);
-            int start = (int)(Math.Floor((double)((PageIndex - 1) / DisplayPageNumber)) * DisplayPageNumber + 1);
-            int end = start + DisplayPageNumber - 1;
-            end = end >= page ? page : end;
-            StartPage = start;
-            EndPage = end;
-            for (int i = start; i <= end; i++)
-            {
-                Pages.Add(new Page(i, false));
-            }
-            Pages[PageIndex - start].IsActived = true;
+            Pages = new ObservableCollection<Page>(pages);
         }
-        private void ResetPageIsActive()
+
+        public void UpdatePageIndex(int index)
         {
-            foreach (Page page in Pages)
-            {
-                page.IsActived = page.Number == PageIndex;
-            }
+            PageIndex = index;
+        }
+
+        public void UpdatePageCount(int count)
+        {
+            PageCount = count;
+        }
+
+        public void PageIndexChanged(PaginationDTO page)
+        {
+            Pagination.Execute(page);
         }
     }
 }

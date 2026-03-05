@@ -4,8 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Youtube.Components.VideoCardComponent"
-             xmlns:conv="clr-namespace:Youtube.Converters"
+             xmlns:conv="clr-namespace:Youtube.Converters" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
+            
              d:DesignHeight="320" d:DesignWidth="360">
 
     <UserControl.Resources>
@@ -68,6 +69,11 @@
             Width="360" 
             Padding="0"
             RenderTransformOrigin="0.5,0.5">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="MouseLeftButtonUp">
+                <i:InvokeCommandAction Command="{Binding OpenVideoCommand}" CommandParameter="{Binding}"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
         <Border.RenderTransform>
             <ScaleTransform ScaleX="1" ScaleY="1"/>
         </Border.RenderTransform>

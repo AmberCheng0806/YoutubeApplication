@@ -16,7 +16,7 @@ namespace Youtube.Contracts
 
         internal interface ISearchPresenter
         {
-            void SearchRequest(SearchRequestDTO searchRequestDTO);
+            Task SearchRequest(SearchRequestDTO searchRequestDTO);
         }
     }
 }
