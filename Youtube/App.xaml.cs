@@ -18,7 +18,6 @@ namespace Youtube
         public static INavigationService NavigationService { get; set; }
         private async void Application_Startup(object sender, StartupEventArgs e)
         {
-
             YoutubeAPI.Auth.Token token = new YoutubeAPI.Auth.Token();
             while (!await token.IsValidScope())
             {

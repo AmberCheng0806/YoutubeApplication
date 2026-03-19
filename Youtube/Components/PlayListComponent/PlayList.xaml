@@ -1,0 +1,103 @@
+﻿<UserControl x:Class="Youtube.Components.PlayListComponent.PlayList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Youtube.Components.PlayListComponent"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="400">
+
+    <Border Background="Transparent"
+            CornerRadius="6"
+            Padding="12,10"
+            Margin="0,2"
+            Cursor="Hand">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="Background" Value="Transparent"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#2A2A2A"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+
+        <Border.InputBindings>
+            <MouseBinding Command="{Binding SaveCommand}" 
+                         CommandParameter="{Binding}"
+                         MouseAction="LeftClick"/>
+        </Border.InputBindings>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 播放清單圖標 -->
+            <Border Grid.Column="0"
+                    Width="36"
+                    Height="36"
+                    CornerRadius="4"
+                    Background="#3F3F3F"
+                    Margin="0,0,12,0">
+                <TextBlock Text="📋" 
+                          FontSize="18"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"/>
+            </Border>
+
+            <!-- 播放清單名稱 -->
+            <TextBlock Grid.Column="1"
+                      Text="{Binding Title}"
+                      FontSize="14"
+                      Foreground="White"
+                      VerticalAlignment="Center"
+                      TextTrimming="CharacterEllipsis"/>
+
+            <!-- 勾選框 - 使用 Border + Trigger -->
+            <Border Grid.Column="2"
+                    Width="20" 
+                    Height="20" 
+                    CornerRadius="4"
+                    BorderThickness="2"
+                    VerticalAlignment="Center">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="BorderBrush" Value="#606060"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Style.Triggers>
+                            <!-- 已加入播放清單:藍色背景 + 勾選標記 -->
+                            <DataTrigger Binding="{Binding IsAddedPlaylist}" Value="True">
+                                <Setter Property="BorderBrush" Value="#3F51B5"/>
+                                <Setter Property="Background" Value="#3F51B5"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+
+                <!-- 勾選標記 ✓ -->
+                <TextBlock FontSize="14" 
+                          FontWeight="Bold"
+                          Foreground="White"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value=""/>
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAddedPlaylist}" Value="True">
+                                    <Setter Property="Text" Value="✓"/>
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>
