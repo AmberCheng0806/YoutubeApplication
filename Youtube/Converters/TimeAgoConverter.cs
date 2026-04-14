@@ -17,7 +17,7 @@ namespace Youtube.Converters
 
             if (!DateTime.TryParse(value.ToString(), out DateTime publishedAt))
                 return string.Empty;
-
+            publishedAt = publishedAt.AddHours(8);
             var now = DateTime.Now;
             var diff = now - publishedAt;
 

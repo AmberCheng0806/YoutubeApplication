@@ -1,0 +1,120 @@
+﻿<UserControl
+    x:Class="Youtube.Components.ReplyCommentComponent.ReplyComment"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:comment="clr-namespace:Youtube.Components.CommentComponent"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Youtube.Components.ReplyCommentComponent"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Cursor=""
+    mc:Ignorable="d">
+    <Border
+        Margin="0,0,0,16"
+        Padding="14"
+        Background="#1A1A1A"
+        CornerRadius="12">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  使用者頭像  -->
+            <Ellipse
+                Grid.Column="0"
+                Width="36"
+                Height="36"
+                Margin="0,0,10,0"
+                VerticalAlignment="Top">
+                <Ellipse.Fill>
+                    <ImageBrush ImageSource="{Binding ChannelImg}" Stretch="UniformToFill" />
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <!--  輸入欄位 + 送出按鈕  -->
+            <StackPanel Grid.Column="1">
+                <TextBox
+                    MinHeight="28"
+                    Padding="0,4,0,6"
+                    AcceptsReturn="True"
+                    Background="Transparent"
+                    BorderBrush="#303030"
+                    BorderThickness="0,0,0,1.5"
+                    CaretBrush="White"
+                    FontSize="14"
+                    Foreground="#CCCCCC"
+                    Text="{Binding CommentText}"
+                    TextWrapping="Wrap">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <!--  placeholder 效果可透過 Behavior 或 Tag 實作  -->
+                            <Setter Property="Tag" Value="新增評論…" />
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+                <StackPanel
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+                    <Button
+                        Margin="0,0,6,0"
+                        Padding="12,6"
+                        Background="Transparent"
+                        BorderBrush="#3F3F3F"
+                        BorderThickness="1"
+                        Command="{Binding CancelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        CommandParameter="{Binding}"
+                        Content="取消"
+                        Cursor="Hand"
+                        FontSize="13"
+                        Foreground="#AAAAAA">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border
+                                    Padding="{TemplateBinding Padding}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="18">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#272727" />
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#3F3F3F" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <Button
+                        Padding="16,6"
+                        Background="#3F51B5"
+                        BorderThickness="0"
+                        Command="{Binding AddCommand}"
+                        CommandParameter="{Binding}"
+                        Content="留言"
+                        Cursor="Hand"
+                        FontSize="13"
+                        FontWeight="Medium"
+                        Foreground="White">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border
+                                    Padding="{TemplateBinding Padding}"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="18">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

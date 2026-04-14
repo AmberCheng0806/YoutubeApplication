@@ -1,28 +1,25 @@
-﻿using PropertyChanged;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace Youtube.Components.PlayListComponent
+namespace Youtube.Presenters.Models
 {
-    [AddINotifyPropertyChangedInterface]
-    public class PlaylistItem
+    internal class PlaylistItemDTO
     {
         public string Id { get; set; }
         public string Title { get; set; }
         public bool IsAddedVideo { get; set; }
         public string PlayListItemVideoId { get; set; }
-        public PlaylistItem(string id, string title, bool isAddedVideo, string playListItemVideoId)
+
+        public PlaylistItemDTO(string id, string title, bool isAddedVideo, string playListItemVideoId)
         {
             Id = id;
             Title = title;
             IsAddedVideo = isAddedVideo;
             PlayListItemVideoId = playListItemVideoId;
         }
-        public ICommand SaveCommand { get; set; }
-        public PlaylistItem() { }
+        public PlaylistItemDTO() { }
     }
 }
