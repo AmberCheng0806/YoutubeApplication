@@ -32,8 +32,10 @@ namespace Youtube.Presenters
             var items = comments?.items.Select(item =>
             {
                 bool isMine = item.snippet.topLevelComment.snippet.authorChannelId.value == App.ChannelId ? true : false;
-                return new CommentItemDTO(item.snippet.topLevelComment.snippet.authorDisplayName, item.snippet.topLevelComment.snippet.textDisplay, item.id, item.snippet.topLevelComment.snippet.authorProfileImageUrl,
-                    item.snippet.topLevelComment.snippet.likeCount, false, item.snippet.topLevelComment.snippet.publishedAt, item.snippet.totalReplyCount, new ObservableCollection<CommentItem>(), isMine);
+                bool isEdited = item.snippet.topLevelComment.snippet.publishedAt == item.snippet.topLevelComment.snippet.updatedAt ? false : true;
+                string text = item.snippet.topLevelComment.snippet.textDisplay;
+                return new CommentItemDTO(item.snippet.topLevelComment.snippet.authorDisplayName, text, text, item.id, item.snippet.topLevelComment.snippet.authorProfileImageUrl,
+                    item.snippet.topLevelComment.snippet.likeCount, false, item.snippet.topLevelComment.snippet.publishedAt, item.snippet.totalReplyCount, new ObservableCollection<CommentItem>(), isMine, "", isEdited);
             }).ToList();
             CommentView.RenderComments(items);
         }
@@ -41,8 +43,8 @@ namespace Youtube.Presenters
         public async void AddCommentRequest(string videoId, string commentText)
         {
             var createComment = await youtubeContext.Comment.CreateCommentByVideoIdAsync(videoId, commentText);
-            var comment = new CommentItemDTO(createComment.snippet.topLevelComment.snippet.authorDisplayName, createComment.snippet.topLevelComment.snippet.textDisplay, createComment.id, createComment.snippet.topLevelComment.snippet.authorProfileImageUrl,
-                createComment.snippet.topLevelComment.snippet.likeCount, false, createComment.snippet.topLevelComment.snippet.publishedAt, 0, new ObservableCollection<CommentItem>(), true);
+            var comment = new CommentItemDTO(createComment.snippet.topLevelComment.snippet.authorDisplayName, commentText, commentText, createComment.id, createComment.snippet.topLevelComment.snippet.authorProfileImageUrl,
+                createComment.snippet.topLevelComment.snippet.likeCount, false, createComment.snippet.topLevelComment.snippet.publishedAt, 0, new ObservableCollection<CommentItem>(), true, "", false);
             CommentView.AddComment(comment);
         }
 
@@ -50,8 +52,8 @@ namespace Youtube.Presenters
         {
             parentId = parentId.Split('.').FirstOrDefault();
             var createComment = await youtubeContext.Comment.CreateCommentByParentIdAsync(parentId, commentText);
-            var comment = new CommentItemDTO(createComment.snippet.authorDisplayName, createComment.snippet.textDisplay, createComment.id, createComment.snippet.authorProfileImageUrl,
-                createComment.snippet.likeCount, false, createComment.snippet.publishedAt, 0, new ObservableCollection<CommentItem>(), true);
+            var comment = new CommentItemDTO(createComment.snippet.authorDisplayName, commentText, commentText, createComment.id, createComment.snippet.authorProfileImageUrl,
+                createComment.snippet.likeCount, false, createComment.snippet.publishedAt, 0, new ObservableCollection<CommentItem>(), true, parentId, false);
             CommentView.AddReplyComment(parentId, comment);
         }
 
@@ -61,10 +63,11 @@ namespace Youtube.Presenters
             var replyComments = comment.items.Select(x =>
             {
                 bool isMine = x.snippet.authorChannelId.value == App.ChannelId ? true : false;
-                //var commentDetail = await youtubeContext.Comment.GetCommentByCommentIdAsync(x.id);
+                bool isEdited = x.snippet.publishedAt == x.snippet.updatedAt ? false : true;
+                string text = x.snippet.textDisplay;
                 bool isLiked = x.snippet.viewerRating == "none" ? false : true;
-                return new CommentItemDTO(x.snippet.authorDisplayName, x.snippet.textDisplay, x.id, x.snippet.authorProfileImageUrl,
-               x.snippet.likeCount, isLiked, x.snippet.publishedAt, 0, new ObservableCollection<CommentItem>(), isMine);
+                return new CommentItemDTO(x.snippet.authorDisplayName, text, text, x.id, x.snippet.authorProfileImageUrl,
+               x.snippet.likeCount, isLiked, x.snippet.publishedAt, 0, new ObservableCollection<CommentItem>(), isMine, parentId, isEdited);
             }).ToList();
             CommentView.RenderReplyComments(parentId, replyComments);
         }
@@ -94,23 +97,37 @@ namespace Youtube.Presenters
 
         }
 
-        //public void LoadReplyCommentRatingRequest(string parentId, List<CommentItemDTO> commentItemDTOs)
-        //{
-        //    //foreach (var item in commentItemDTOs)
-        //    //{
-        //    //    var commentDetail = await youtubeContext.Comment.GetCommentByCommentIdAsync(item.Id);
-        //    //    bool isLiked = commentDetail.items[0].snippet.topLevelComment.snippet.viewerRating == "none" ? false : true;
-        //    //    item.IsLiked = isLiked;
-        //    //}
-        //    //CommentView.UpdateReplyCommentsRating(parentId, commentItemDTOs);
+        public async void DeleteCommentRequest(DeleteCommentDTO deleteCommentDTO)
+        {
+            var deleteComment = await youtubeContext.Comment.DeleteAsync(deleteCommentDTO.CommentId);
+            CommentView.DeleteComment(deleteCommentDTO);
+        }
 
-        //    var dtos = commentItemDTOs.Select(async item =>
-        //    {
-        //        var commentDetail = await youtubeContext.Comment.GetCommentByCommentIdAsync(item.Id);
-        //        bool isLiked = commentDetail.items[0].snippet.topLevelComment.snippet.viewerRating == "none" ? false : true;
-        //        item.IsLiked = isLiked;
-        //        CommentView.UpdateReplyCommentRating(parentId, item);
-        //    }).ToList();
-        //}
+        public async void DeleteReplyCommentRequest(DeleteCommentDTO deleteCommentDTO)
+        {
+            var deleteComment = await youtubeContext.Comment.DeleteAsync(deleteCommentDTO.CommentId);
+            CommentView.DeleteReplyComment(deleteCommentDTO);
+        }
+
+        public async void EditCommentRequest(string commentId, string commentText)
+        {
+            var updateComment = await youtubeContext.Comment.UpdateCommentByCommentIdAsync(commentId, commentText);
+            var comment = new CommentItemDTO(updateComment.snippet.authorDisplayName, commentText, commentText, updateComment.id, updateComment.snippet.authorProfileImageUrl,
+            updateComment.snippet.likeCount, false, updateComment.snippet.publishedAt, 0, new ObservableCollection<CommentItem>(), true, "", true);
+            CommentView.EditComment(commentId, commentText);
+            //CommentView.DeleteComment(new DeleteCommentDTO(commentId,updateComment.snippet.));
+            //CommentView.AddComment(comment);
+        }
+
+        public async void EditReplyCommentRequest(string parentId, string commentId, string commentText)
+        {
+            parentId = parentId.Split('.').FirstOrDefault();
+            var updateComment = await youtubeContext.Comment.UpdateCommentByCommentIdAsync(commentId, commentText);
+            var comment = new CommentItemDTO(updateComment.snippet.authorDisplayName, commentText, commentText, updateComment.id, updateComment.snippet.authorProfileImageUrl,
+            updateComment.snippet.likeCount, false, updateComment.snippet.publishedAt, 0, new ObservableCollection<CommentItem>(), true, parentId, true);
+            CommentView.EditReplyComment(parentId, commentId, commentText);
+            //CommentView.DeleteReplyComment(parentId, commentId);
+            //CommentView.AddReplyComment(parentId, comment);
+        }
     }
 }

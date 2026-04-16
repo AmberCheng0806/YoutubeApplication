@@ -36,22 +36,19 @@ namespace Youtube.Views.Pages.VideoPages
         public DateTime PublishedAt { get; set; }
         public string ViewCount { get; set; }
         public string LikeCount { get; set; }
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = "https://t3.ftcdn.net/jpg/06/33/54/78/360_F_633547842_AugYzexTpMJ9z1YcpTKUBoqBF0CUCk10.jpg";
         public ObservableCollection<PlaylistItem> Playlists { get; set; } = new ObservableCollection<PlaylistItem>();
-        [AlsoNotifyFor(nameof(NoCommentsVisibility))]
         public ObservableCollection<CommentItem> Comments { get; set; } = new ObservableCollection<CommentItem>();
         public bool IsSubscript { get; set; } = false;
         public string RateText { get; set; } = "";
-        //public string CommentText { get; set; }
-        public Visibility NoCommentsVisibility => Comments.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        [DependsOn(nameof(TotalComments))]
+        public Visibility NoCommentsVisibility => TotalComments == 0 ? Visibility.Visible : Visibility.Collapsed;
         [DependsOn(nameof(IsSubscript))]
         public string SubcriptionText => IsSubscript ? "已訂閱" : "訂閱";
         public int TotalComments { get; set; }
-        //private string subscriptionId = "";
         private YoutubeContext youtubeContext = new YoutubeContext();
         private ICommentPresenter CommentPresenter;
         private IVideoDetailPresenter VideoDetailPresenter;
-        //private bool IsInitiateReply { get; set; } = false;
         public ICommand SubscriptCommand { get; set; }
         public ICommand LikeCommand { get; set; }
         public ICommand DisLikeCommand { get; set; }
@@ -60,6 +57,8 @@ namespace Youtube.Views.Pages.VideoPages
         public ICommand AddReplyCommentCommand { get; set; }
         public ICommand ShowReplyCommentsCommand { get; set; }
         public ICommand ClearTopReplyCommentTextCommand { get; set; }
+        public ICommand DeleteCommentCommand { get; set; }
+        public ICommand EditCommentCommand { get; set; }
         public VideoDetailContext()
         {
             CommentPresenter = new CommentPresenter(this);
@@ -101,13 +100,10 @@ namespace Youtube.Views.Pages.VideoPages
                 IsSubscript = !IsSubscript;
                 if (IsSubscript)
                 {
-                    //var createSuscription = await youtubeContext.Subscription.SubscriptAsync(channelId);
-                    //subscriptionId = createSuscription.id;
                     VideoDetailPresenter.SubscriptRequest();
                 }
                 else
                 {
-                    //await youtubeContext.Subscription.DeleteAsync(subscriptionId);
                     VideoDetailPresenter.UnSubscriptRequest();
                 }
             });
@@ -142,7 +138,6 @@ namespace Youtube.Views.Pages.VideoPages
             {
                 if (x.IsAddedVideo)
                 {
-                    //await youtubeContext.PlayListItem.DeleteAsync(PlayListItemId);
                     VideoDetailPresenter.RemovePlayListRequest(x.PlayListItemVideoId);
                     x.IsAddedVideo = false;
                     new ToastContentBuilder()
@@ -151,10 +146,8 @@ namespace Youtube.Views.Pages.VideoPages
                 }
                 else
                 {
-                    //var playlistItem = await youtubeContext.PlayListItem.CreateAsync(x.Id, VideoId);
                     VideoDetailPresenter.SavePlayListRequest(x.Id, VideoId);
                     x.IsAddedVideo = true;
-                    //PlayListItemId = playlistItem.id;
                     new ToastContentBuilder()
                     .AddText("已加入播放清單")
                     .Show();
@@ -184,6 +177,15 @@ namespace Youtube.Views.Pages.VideoPages
             {
                 TotalComments++;
             });
+            WeakReferenceMessenger.Default.Register<DeleteCommentDTO, string>(this, "DecreaseCountCommand", (sender, dto) =>
+            {
+                DeleteCommentDTO comment = (DeleteCommentDTO)dto;
+                TotalComments = TotalComments - comment.ReplyCount - 1;
+            });
+            WeakReferenceMessenger.Default.Register<string, string>(this, "DecreaseReplyCountCommand", (sender, dto) =>
+            {
+                TotalComments--;
+            });
             AddReplyCommentCommand = new RelayCommand<ReplyCommentContext>(x =>
             {
                 CommentPresenter.AddReplyCommentRequest(x.ParentId, x.CommentText);
@@ -199,14 +201,32 @@ namespace Youtube.Views.Pages.VideoPages
                 }
             });
             ClearTopReplyCommentTextCommand = new RelayCommand<ReplyCommentContext>(x => { x.CommentText = ""; });
+            DeleteCommentCommand = new RelayCommand<CommentItem>(x =>
+            {
+                if (x.ParentId == "")
+                {
+                    CommentPresenter.DeleteCommentRequest(new DeleteCommentDTO(x.Id, x.ReplyCount, x.ParentId));
+                }
+                else
+                {
+                    CommentPresenter.DeleteReplyCommentRequest(new DeleteCommentDTO(x.Id, x.ReplyCount, x.ParentId));
+                }
+            });
+            EditCommentCommand = new RelayCommand<CommentItem>(x =>
+            {
+                if (x.ParentId == "")
+                {
+                    CommentPresenter.EditCommentRequest(x.Id, x.EditedCommentText);
+                }
+                else
+                {
+                    CommentPresenter.EditReplyCommentRequest(x.ParentId, x.Id, x.EditedCommentText);
+                }
+                x.CommentText = x.EditedCommentText;
+                x.IsEditingMode = false;
+            });
         }
 
-        //private async Task<bool> IsAddedPlaylist(string playlistId, string videoTitle)
-        //{
-        //    var playlistItem = await youtubeContext.PlayListItem.GetAllAsync(playlistId);
-        //    var list = playlistItem.items;
-        //    return list.Any(x => { if (x.snippet.title == videoTitle) PlayListItemId = x.id; return x.snippet.title == videoTitle; });
-        //}
 
         public void RenderComments(List<CommentItemDTO> comments)
         {
@@ -282,8 +302,6 @@ namespace Youtube.Views.Pages.VideoPages
                 };
                 return x.Id == parentId;
             });
-            //IsInitiateReply = true;
-            //CommentPresenter.LoadReplyCommentRatingRequest(parentId, comments);
         }
 
         public void UpdateTotalComments(int count)
@@ -301,21 +319,50 @@ namespace Youtube.Views.Pages.VideoPages
             });
         }
 
-        //public void UpdateReplyCommentRating(string parentId, CommentItemDTO comment)
-        //{
-        //    var replyComment = AutoMapper.AutoMapper.Map<CommentItemDTO, CommentItem>(comment);
-        //    Comments.FirstOrDefault(x =>
-        //    {
-        //        if (x.Id == parentId)
-        //        {
-        //            x.ReplyCommentItems.FirstOrDefault(y =>
-        //            {
-        //                if (y.Id == comment.Id) y.IsLiked = comment.IsLiked;
-        //                return y.Id == comment.Id;
-        //            });
-        //        };
-        //        return x.Id == parentId;
-        //    });
-        //}
+        public void DeleteComment(DeleteCommentDTO deleteCommentDTO)
+        {
+            var item = Comments.FirstOrDefault(x => x.Id == deleteCommentDTO.CommentId);
+            Comments.Remove(item);
+            WeakReferenceMessenger.Default.Send(deleteCommentDTO, "DecreaseCountCommand");
+        }
+
+        public void DeleteReplyComment(DeleteCommentDTO deleteCommentDTO)
+        {
+            Comments.FirstOrDefault(x =>
+            {
+                if (x.Id == deleteCommentDTO.ParentId)
+                {
+                    var item = x.ReplyCommentItems.FirstOrDefault(y => y.Id == deleteCommentDTO.CommentId);
+                    x.ReplyCommentItems.Remove(item);
+                    x.ReplyCount--;
+                };
+                return x.Id == deleteCommentDTO.ParentId;
+            });
+            WeakReferenceMessenger.Default.Send(deleteCommentDTO.CommentId, "DecreaseReplyCountCommand");
+        }
+
+        public void EditComment(string commentId, string commentText)
+        {
+            var item = Comments.FirstOrDefault(x =>
+            {
+                if (x.Id == commentId)
+                { x.CommentText = commentText; x.IsEdited = true; }
+                return x.Id == commentId;
+            });
+        }
+
+        public void EditReplyComment(string parentId, string commentId, string commentText)
+        {
+            Comments.FirstOrDefault(x =>
+            {
+                if (x.Id == parentId)
+                {
+                    var item = x.ReplyCommentItems.FirstOrDefault(y => y.Id == commentId);
+                    item.CommentText = commentText;
+                    item.IsEdited = true;
+                };
+                return x.Id == parentId;
+            });
+        }
     }
 }

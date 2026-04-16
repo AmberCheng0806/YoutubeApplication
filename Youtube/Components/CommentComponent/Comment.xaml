@@ -13,6 +13,7 @@
 
     <UserControl.Resources>
         <converter:TimeAgoConverter x:Key="TimeAgoConverter" />
+        <converter:InverseEditVisibilityConverter x:Key="InverseEditVisibilityConverter" />
     </UserControl.Resources>
 
     <Grid Margin="0,0,0,16">
@@ -57,8 +58,21 @@
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
                     FontSize="11"
-                    Foreground="#666666"
-                    Text="{Binding PublishedAt, Converter={StaticResource TimeAgoConverter}}" />
+                    Foreground="#666666">
+                    <Run Text="{Binding PublishedAt, Converter={StaticResource TimeAgoConverter}}" />
+                    <Run>
+                        <Run.Style>
+                            <Style TargetType="Run">
+                                <Setter Property="Text" Value="" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsEdited}" Value="True">
+                                        <Setter Property="Text" Value=" (已編輯)" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Run.Style>
+                    </Run>
+                </TextBlock>
 
                 <ToggleButton
                     x:Name="editCommentBtn"
@@ -114,6 +128,7 @@
                             <Button
                                 Padding="14,10"
                                 BorderThickness="0"
+                                Command="{Binding EditModeCommand}"
                                 Content="✏ 編輯留言"
                                 Foreground="#CCCCCC">
                                 <Button.Style>
@@ -145,7 +160,10 @@
                                 Margin="10,0"
                                 Background="#3A3A3A" />
 
-                            <Button BorderThickness="0">
+                            <Button
+                                BorderThickness="0"
+                                Command="{Binding DataContext.DeleteCommentCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                CommandParameter="{Binding}">
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Setter Property="Background" Value="Transparent" />
@@ -177,17 +195,96 @@
             <!--  留言內容  -->
             <TextBlock
                 Margin="0,0,0,8"
-                helper:TextBlockHelper.HtmlText="{Binding CommandText}"
+                helper:TextBlockHelper.HtmlText="{Binding CommentText}"
                 FontSize="13"
                 Foreground="#CCCCCC"
                 LineHeight="19"
-                TextWrapping="Wrap" />
+                TextWrapping="Wrap"
+                Visibility="{Binding EditingModeVisibility, Converter={StaticResource InverseEditVisibilityConverter}}" />
 
+            <!--  編輯模式輸入區塊  -->
+            <StackPanel Margin="0,0,0,8" Visibility="{Binding EditingModeVisibility}">
+                <TextBox
+                    Padding="10,8"
+                    Background="#121212"
+                    BorderBrush="#3A3A3A"
+                    BorderThickness="0,0,0,1"
+                    CaretBrush="#CCCCCC"
+                    FontSize="13"
+                    Foreground="#CCCCCC"
+                    SelectionBrush="#3F51B5"
+                    Text="{Binding EditedCommentText, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="FontFamily" Value="Segoe UI, Microsoft JhengHei UI, 微軟正黑體" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="TextBox">
+                                        <Border
+                                            x:Name="border"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}">
+                                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsFocused" Value="True">
+                                                <Setter TargetName="border" Property="BorderBrush" Value="#AAAAAA" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+                <!--  儲存 / 取消按鈕列  -->
+                <StackPanel
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+                    <Border
+                        Margin="0,0,8,0"
+                        Padding="12,6"
+                        Background="Transparent"
+                        CornerRadius="18"
+                        Cursor="Hand">
+                        <TextBlock
+                            FontSize="13"
+                            Foreground="#AAAAAA"
+                            Text="取消">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonUp">
+                                    <i:InvokeCommandAction Command="{Binding CancelEditModeCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBlock>
+                    </Border>
+                    <Border
+                        Padding="12,6"
+                        Background="#3F51B5"
+                        CornerRadius="18"
+                        Cursor="Hand">
+                        <TextBlock
+                            FontSize="13"
+                            Foreground="White"
+                            Text="儲存">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonUp">
+                                    <i:InvokeCommandAction Command="{Binding DataContext.EditCommentCommand, RelativeSource={RelativeSource AncestorType=Page}}" CommandParameter="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBlock>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
 
             <!--  互動按鈕列  -->
             <StackPanel Cursor="" Orientation="Horizontal">
 
-                <!--  按讚按鈕 (IsLiked 觸發器直接寫在這裡)  -->
+                <!--  按讚按鈕  -->
                 <Border
                     Margin="0,0,6,0"
                     Padding="10,4"
@@ -239,7 +336,8 @@
                     Padding="10,4"
                     Background="Transparent"
                     CornerRadius="14"
-                    Cursor="Hand">
+                    Cursor="Hand"
+                    Visibility="{Binding EditingModeVisibility, Converter={StaticResource InverseEditVisibilityConverter}}">
                     <TextBlock
                         FontSize="12"
                         Foreground="#AAAAAA"
@@ -251,8 +349,8 @@
                         </i:Interaction.Triggers>
                     </TextBlock>
                 </Border>
-
             </StackPanel>
+
             <!--  回覆的ReplyComment usercontrol  -->
             <Border Margin="0,15,0,0" Visibility="{Binding ReplyCommentVisibility}">
                 <Reply:ReplyComment
@@ -278,7 +376,7 @@
                 <ItemsControl ItemsSource="{Binding ReplyCommentItems}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <local:Comment ShowReplyCommand="{Binding ShowReplyCommentsCommand}" />
+                            <local:Comment />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

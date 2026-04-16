@@ -18,7 +18,10 @@ namespace Youtube.Contracts
             void RenderReplyComments(string parentId, List<CommentItemDTO> comments);
             void UpdateTotalComments(int count);
             void UpdateCommentRating(CommentItemDTO commentItemDTOs);
-            //void UpdateReplyCommentRating(string parentId, CommentItemDTO commentItemDTOs);
+            void DeleteComment(DeleteCommentDTO deleteCommentDTO);
+            void DeleteReplyComment(DeleteCommentDTO deleteCommentDTO);
+            void EditComment(string commentId, string commentText);
+            void EditReplyComment(string parentId, string commentId, string commentText);
         }
 
         public interface ICommentPresenter
@@ -28,7 +31,10 @@ namespace Youtube.Contracts
             void AddCommentRequest(string videoId, string commentText);
             void AddReplyCommentRequest(string parentId, string commentText);
             void LoadReplyCommentsRequest(string parentId);
-            //void LoadReplyCommentRatingRequest(string parentId, List<CommentItemDTO> commentItemDTOs);
+            void DeleteCommentRequest(DeleteCommentDTO deleteCommentDTO);
+            void DeleteReplyCommentRequest(DeleteCommentDTO deleteCommentDTO);
+            void EditCommentRequest(string commentId, string commentText);
+            void EditReplyCommentRequest(string parentId, string commentId, string commentText);
         }
     }
 }

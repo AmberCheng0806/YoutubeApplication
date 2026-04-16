@@ -90,11 +90,13 @@
     <Compile Include="Contracts\CommentContract.cs" />
     <Compile Include="Contracts\PaginationContract.cs" />
     <Compile Include="Contracts\VideoDetailContract.cs" />
+    <Compile Include="Converters\InverseEditVisibilityConverter.cs" />
     <Compile Include="Converters\TimeAgoConverter.cs" />
     <Compile Include="Converters\ViewCountConverter.cs" />
     <Compile Include="Presenters\CommentPresenter.cs" />
     <Compile Include="Presenters\Enums\VideoType.cs" />
     <Compile Include="Presenters\Models\CommentItemDTO.cs" />
+    <Compile Include="Presenters\Models\DeleteCommentDTO.cs" />
     <Compile Include="Presenters\Models\OptionsViewModel.cs" />
     <Compile Include="Presenters\Models\PlaylistItemDTO.cs" />
     <Compile Include="Presenters\Models\SearchRequestDTO.cs" />
