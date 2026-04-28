@@ -1,0 +1,99 @@
+﻿<Page
+    x:Class="Youtube.Views.Pages.MemberCenterPages.MemberCenterVideos"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:Youtube.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Youtube.Views.Pages.MemberCenterPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MemberCenterVideos"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converter:PrivacyConverter x:Key="PrivacyConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <ItemsControl ItemsSource="{Binding Videos}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border
+                        Padding="10"
+                        BorderBrush="#EEEEEE"
+                        BorderThickness="0,0,0,1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="300" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="180" />
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Grid.Column="0" Margin="0,0,15,0">
+                                <Image
+                                    Height="80"
+                                    Source="{Binding VideoImg}"
+                                    Stretch="UniformToFill" />
+                            </Grid>
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock
+                                    Margin="0,0,0,5"
+                                    FontSize="14"
+                                    FontWeight="Bold"
+                                    Text="{Binding VideoTitle}" />
+                                <TextBlock
+                                    FontSize="12"
+                                    Foreground="Gray"
+                                    Text="{Binding VideoDescription}" />
+                            </StackPanel>
+
+                            <StackPanel
+                                Grid.Column="2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center">
+                                <TextBlock FontSize="12" Text="{Binding PrivacyStatus, Converter={StaticResource PrivacyConverter}}" />
+                            </StackPanel>
+
+                            <TextBlock
+                                Grid.Column="3"
+                                VerticalAlignment="Center"
+                                Foreground="#606060"
+                                Text="{Binding PublishedTime, StringFormat=\{0:yyyy年MM月dd日\}}" />
+
+                            <TextBlock
+                                Grid.Column="4"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{Binding ViewCount}" />
+                            <TextBlock
+                                Grid.Column="5"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{Binding CommentsCount}" />
+                            <TextBlock
+                                Grid.Column="6"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <Run Text="{Binding LikeCount}" />
+                                <Run Text=" 人喜歡 / " />
+                                <Run Text="{Binding DisLikeCount}" />
+                                <Run Text=" 人不喜歡" />
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</Page>

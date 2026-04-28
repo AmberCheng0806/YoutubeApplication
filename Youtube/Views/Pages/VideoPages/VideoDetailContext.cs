@@ -45,6 +45,12 @@ namespace Youtube.Views.Pages.VideoPages
         public Visibility NoCommentsVisibility => TotalComments == 0 ? Visibility.Visible : Visibility.Collapsed;
         [DependsOn(nameof(IsSubscript))]
         public string SubcriptionText => IsSubscript ? "已訂閱" : "訂閱";
+        public string CreatePlayListText { get; set; } = "";
+        public string PlaylistPrivacyStatus { get; set; } = "public";
+        [DependsOn(nameof(CreatePlayListText))]
+        public bool IsCreatePlaylistBtnEnable => CreatePlayListText == "" ? false : true;
+        public bool IsCreatePlaylistPopup { get; set; } = false;
+        public List<OptionsViewModel> Status { get; set; } = new List<OptionsViewModel>() { new OptionsViewModel("public", "公開"), new OptionsViewModel("unlisted", "不公開"), new OptionsViewModel("private", "私人") };
         public int TotalComments { get; set; }
         private YoutubeContext youtubeContext = new YoutubeContext();
         private ICommentPresenter CommentPresenter;
@@ -59,52 +65,29 @@ namespace Youtube.Views.Pages.VideoPages
         public ICommand ClearTopReplyCommentTextCommand { get; set; }
         public ICommand DeleteCommentCommand { get; set; }
         public ICommand EditCommentCommand { get; set; }
+        public ICommand CancelCreatePlaylistCommand { get; set; }
+        public ICommand CreatePlaylistCommand { get; set; }
         public VideoDetailContext()
         {
             CommentPresenter = new CommentPresenter(this);
             VideoDetailPresenter = new VideoDetailPresenter(this);
         }
-        public void OnNavigatedTo(object[] parameter)
+        public async void OnNavigatedTo(object[] parameter)
         {
             VideoId = parameter[0] as string;
-            VideoDetailPresenter.GetVideoDetailRequest(VideoId);
-            //var videostatics = await youtubeContext.Video.GetByVideoIdAsync(VideoId);
-            //VideoTitle = videostatics.items[0].snippet.title;
-            //VideoDescription = videostatics.items[0].snippet.description;
-            //ChannelTitle = videostatics.items[0].snippet.channelTitle;
-            //PublishedAt = videostatics.items[0].snippet.publishedAt;
-            //ViewCount = videostatics.items[0].statistics.viewCount;
-            //LikeCount = videostatics.items[0].statistics.likeCount;
-            //string channelId = videostatics.items[0].snippet.channelId;
-            //var subscription = await youtubeContext.Subscription.GetAsync(channelId);
-            //if (subscription.items.Length != 0)
-            //{
-            //    IsSubscript = true;
-            //    subscriptionId = subscription.items[0].id;
-            //}
-            //var channel = await youtubeContext.Channel.GetByChannelIdAsync(channelId);
-            //ImageUrl = channel.items[0].snippet.thumbnails.medium.url;
-            //var rate = await youtubeContext.Video.GetRateAsync(VideoId);
-            //RateText = rate.items[0].rating;
+            await VideoDetailPresenter.GetVideoDetailRequest(VideoId);
+            await Task.WhenAll(VideoDetailPresenter.GetPlayListRequest(), CommentPresenter.LoadCommentsRequest(VideoId));
 
-            //var playList = await youtubeContext.Playlist.GetAllAsync();
-            //foreach (var item in playList.items)
-            //{
-            //    bool isAdded = await IsAddedPlaylist(item.id, VideoTitle);
-            //    Playlists.Add(new PlaylistItem(item.id, item.snippet.title, isAdded));
-            //}
-            VideoDetailPresenter.GetPlayListRequest();
-
-            SubscriptCommand = new RelayCommand(() =>
+            SubscriptCommand = new RelayCommand(async () =>
             {
                 IsSubscript = !IsSubscript;
                 if (IsSubscript)
                 {
-                    VideoDetailPresenter.SubscriptRequest();
+                    await VideoDetailPresenter.SubscriptRequest();
                 }
                 else
                 {
-                    VideoDetailPresenter.UnSubscriptRequest();
+                    await VideoDetailPresenter.UnSubscriptRequest();
                 }
             });
             LikeCommand = new RelayCommand(() =>
@@ -154,22 +137,10 @@ namespace Youtube.Views.Pages.VideoPages
                 }
             });
 
-            //var comments = await youtubeContext.Comment.GetCommentByVideoIdAsync(VideoId);
-            //var items = comments?.items.Select(item =>
-            //{
-            //    bool isLiked = item.snippet.topLevelComment.snippet.viewerRating == "none" ? false : true;
-            //    return new CommentItem(item.snippet.topLevelComment.snippet.authorDisplayName, item.snippet.topLevelComment.snippet.textDisplay, item.id, item.snippet.topLevelComment.snippet.authorProfileImageUrl,
-            //        item.snippet.topLevelComment.snippet.likeCount, isLiked, item.snippet.topLevelComment.snippet.publishedAt);
-            //});
-            //Comments = new ObservableCollection<CommentItem>(items);
-            CommentPresenter.LoadCommentsRequest(VideoId);
+            //CommentPresenter.LoadCommentsRequest(VideoId);
 
             AddCommentCommand = new RelayCommand<ReplyCommentContext>(x =>
             {
-                //var createComment = await youtubeContext.Comment.CreateCommentByVideoIdAsync(VideoId, commentText);
-                //bool isLiked = createComment.snippet.topLevelComment.snippet.viewerRating == "none" ? false : true;
-                //Comments.Add(new CommentItem(createComment.snippet.topLevelComment.snippet.authorDisplayName, createComment.snippet.topLevelComment.snippet.textDisplay, createComment.id, createComment.snippet.topLevelComment.snippet.authorProfileImageUrl,
-                //    createComment.snippet.topLevelComment.snippet.likeCount, isLiked, createComment.snippet.topLevelComment.snippet.publishedAt));
                 CommentPresenter.AddCommentRequest(VideoId, x.CommentText);
                 x.CommentText = "";
             });
@@ -224,6 +195,20 @@ namespace Youtube.Views.Pages.VideoPages
                 }
                 x.CommentText = x.EditedCommentText;
                 x.IsEditingMode = false;
+            });
+            CancelCreatePlaylistCommand = new RelayCommand(() =>
+            {
+                IsCreatePlaylistPopup = !IsCreatePlaylistPopup;
+                if (!IsCreatePlaylistPopup)
+                {
+                    CreatePlayListText = "";
+                    PlaylistPrivacyStatus = "public";
+                }
+            });
+            CreatePlaylistCommand = new RelayCommand(() =>
+            {
+                VideoDetailPresenter.CreatePlaylistRequest(CreatePlayListText, PlaylistPrivacyStatus, VideoId);
+                IsCreatePlaylistPopup = false;
             });
         }
 
@@ -363,6 +348,12 @@ namespace Youtube.Views.Pages.VideoPages
                 };
                 return x.Id == parentId;
             });
+        }
+
+        public void CreatePlaylist(PlaylistItemDTO playlistItemDTO)
+        {
+            var playlist = AutoMapper.AutoMapper.Map<PlaylistItemDTO, PlaylistItem>(playlistItemDTO);
+            Playlists.Add(playlist);
         }
     }
 }

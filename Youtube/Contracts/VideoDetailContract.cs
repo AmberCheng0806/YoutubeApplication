@@ -15,6 +15,7 @@ namespace Youtube.Contracts
             void RenderPlayList(List<PlaylistItemDTO> playlistItemDTOs);
             void AddPlayListItemVideoId(string playListId, string playListItemVideoId);
             void RemovePlayListItemVideoId(string playListItemVideoId);
+            void CreatePlaylist(PlaylistItemDTO playlistItemDTO);
         }
 
         public interface IVideoDetailPresenter
@@ -26,6 +27,7 @@ namespace Youtube.Contracts
             Task GetPlayListRequest();
             Task SavePlayListRequest(string playListId, string videoId);
             Task RemovePlayListRequest(string playListItemVideoId);
+            Task CreatePlaylistRequest(string name, string status, string videoId);
         }
     }
 }

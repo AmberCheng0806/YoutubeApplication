@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using Youtube.Components.PaginationComponent;
 using Youtube.Components.SearchFilterComponent;
@@ -24,8 +26,10 @@ namespace Youtube.Views
     {
         public string Title { get; set; } = "Hello World";
         public string SearchText { get; set; }
+        public string MyChannelImgUrl { get; set; } = App.ChannelImg;
         public ICommand SearchCommand { get; set; }
         public ICommand SearchConditionCommand { get; set; }
+        public ICommand ClickMyChannelImgCommand { get; set; }
         public SearchFilterDTO SearchFilter { get; set; } = new SearchFilterDTO();
 
         public INavigationService NavigationService { get; set; }
@@ -39,7 +43,10 @@ namespace Youtube.Views
             {
                 navigationService.Navigate("VideoSearch", CreateSearchRequest());
             });
-
+            ClickMyChannelImgCommand = new RelayCommand(() =>
+            {
+                navigationService.Navigate("MemberCenter", null);
+            });
         }
 
         private SearchRequestDTO CreateSearchRequest()

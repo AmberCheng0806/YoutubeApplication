@@ -91,14 +91,18 @@
     <Compile Include="Contracts\PaginationContract.cs" />
     <Compile Include="Contracts\VideoDetailContract.cs" />
     <Compile Include="Converters\InverseEditVisibilityConverter.cs" />
+    <Compile Include="Converters\PrivacyConverter.cs" />
     <Compile Include="Converters\TimeAgoConverter.cs" />
     <Compile Include="Converters\ViewCountConverter.cs" />
     <Compile Include="Presenters\CommentPresenter.cs" />
     <Compile Include="Presenters\Enums\VideoType.cs" />
     <Compile Include="Presenters\Models\CommentItemDTO.cs" />
     <Compile Include="Presenters\Models\DeleteCommentDTO.cs" />
+    <Compile Include="Presenters\Models\MemberCenterPlaylistModel.cs" />
+    <Compile Include="Presenters\Models\MemberCenterVideoModel.cs" />
     <Compile Include="Presenters\Models\OptionsViewModel.cs" />
     <Compile Include="Presenters\Models\PlaylistItemDTO.cs" />
+    <Compile Include="Presenters\Models\PlaylistItemVideo.cs" />
     <Compile Include="Presenters\Models\SearchRequestDTO.cs" />
     <Compile Include="Presenters\Models\VideoDetailDTO.cs" />
     <Compile Include="Presenters\PaginationPresenter.cs" />
@@ -111,6 +115,18 @@
     <Compile Include="Utility\WebView2Helper.cs" />
     <Compile Include="Views\MainWindowContext.cs" />
     <Compile Include="Views\Pages\INavigationAware.cs" />
+    <Compile Include="Views\Pages\MemberCenterPages\MemberCenter.xaml.cs">
+      <DependentUpon>MemberCenter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\MemberCenterPages\MemberCenterContext.cs" />
+    <Compile Include="Views\Pages\MemberCenterPages\MemberCenterPlaylists.xaml.cs">
+      <DependentUpon>MemberCenterPlaylists.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\MemberCenterPages\MemberCenterPlaylistsContext.cs" />
+    <Compile Include="Views\Pages\MemberCenterPages\MemberCenterVideos.xaml.cs">
+      <DependentUpon>MemberCenterVideos.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\MemberCenterPages\MemberCenterVideosContext.cs" />
     <Compile Include="Views\Pages\VideoPages\VideoDetail.xaml.cs">
       <DependentUpon>VideoDetail.xaml</DependentUpon>
     </Compile>
@@ -160,6 +176,18 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\Pages\MemberCenterPages\MemberCenter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\MemberCenterPages\MemberCenterPlaylists.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\MemberCenterPages\MemberCenterVideos.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Pages\VideoPages\VideoDetail.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

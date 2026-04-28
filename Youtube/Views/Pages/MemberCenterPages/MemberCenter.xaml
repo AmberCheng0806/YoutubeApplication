@@ -1,0 +1,82 @@
+﻿<Page
+    x:Class="Youtube.Views.Pages.MemberCenterPages.MemberCenter"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Youtube.Views.Pages.MemberCenterPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MemberCenter"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Background="#0F0F0F"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <!--  頁籤 RadioButton 樣式（RadioButton 原生支援 GroupName 互斥）  -->
+        <Style x:Key="TabRadioButtonStyle" TargetType="RadioButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#AAAAAA" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid>
+                            <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <!--  底部白色指示線，IsChecked=True 時顯示  -->
+                            <Border
+                                x:Name="ActiveIndicator"
+                                Height="2"
+                                VerticalAlignment="Bottom"
+                                Background="White"
+                                Visibility="Collapsed" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1A1A1A" />
+                                <Setter Property="Foreground" Value="#FFFFFF" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Foreground" Value="#FFFFFF" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                                <Setter TargetName="ActiveIndicator" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <StackPanel Background="#0F0F0F">
+
+        <!--  頁籤列，底部有分隔線  -->
+        <Border BorderBrush="#272727" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal">
+                <RadioButton
+                    Command="{Binding SwitchPageCommand}"
+                    CommandParameter="MemberCenterVideos"
+                    Content="影片"
+                    GroupName="MainTabs"
+                    IsChecked="True"
+                    Style="{StaticResource TabRadioButtonStyle}" />
+                <RadioButton
+                    Command="{Binding SwitchPageCommand}"
+                    CommandParameter="MemberCenterPlaylists"
+                    Content="播放清單"
+                    GroupName="MainTabs"
+                    IsChecked="False"
+                    Style="{StaticResource TabRadioButtonStyle}" />
+            </StackPanel>
+        </Border>
+
+        <!--  子頁面內容  -->
+        <Frame x:Name="MemberPageContainer" ClipToBounds="True" />
+
+    </StackPanel>
+</Page>

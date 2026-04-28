@@ -1,63 +1,67 @@
-﻿<Window x:Class="Youtube.Views.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Youtube.Views"
-        mc:Ignorable="d"
-        xmlns:video="clr-namespace:Youtube.Components.VideoCardComponent"
-        xmlns:filter="clr-namespace:Youtube.Components.SearchFilterComponent"
-        xmlns:page="clr-namespace:Youtube.Components.PaginationComponent"
-        Title="YouTube Search" Height="800" Width="1400"
-        WindowStartupLocation="CenterScreen"
-        Background="#0F0F0F">
+﻿<Window
+    x:Class="Youtube.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:filter="clr-namespace:Youtube.Components.SearchFilterComponent"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:Youtube.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:page="clr-namespace:Youtube.Components.PaginationComponent"
+    xmlns:video="clr-namespace:Youtube.Components.VideoCardComponent"
+    Title="YouTube Search"
+    Width="1400"
+    Height="800"
+    Background="#0F0F0F"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
 
     <Window.Resources>
-        <!-- 最簡單的搜尋框樣式 - 不使用 Template，直接設定屬性 -->
+        <!--  最簡單的搜尋框樣式 - 不使用 Template，直接設定屬性  -->
         <Style x:Key="SearchTextBoxStyle" TargetType="TextBox">
-            <Setter Property="Background" Value="#2A2A2A"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#3F51B5"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Padding" Value="16,12"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontFamily" Value="Segoe UI"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="#2A2A2A" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="#3F51B5" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="Padding" Value="16,12" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="#5C6BC0"/>
+                    <Setter Property="BorderBrush" Value="#5C6BC0" />
                 </Trigger>
                 <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="#5C6BC0"/>
-                    <Setter Property="Background" Value="#333333"/>
+                    <Setter Property="BorderBrush" Value="#5C6BC0" />
+                    <Setter Property="Background" Value="#333333" />
                 </Trigger>
             </Style.Triggers>
         </Style>
 
-        <!-- 搜尋按鈕樣式 -->
+        <!--  搜尋按鈕樣式  -->
         <Style x:Key="SearchButtonStyle" TargetType="ButtonBase">
-            <Setter Property="Background" Value="#3F51B5"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="28,12"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="#3F51B5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="28,12" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ButtonBase">
-                        <Border Background="{TemplateBinding Background}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"/>
+                        <Border
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#5C6BC0"/>
+                                <Setter Property="Background" Value="#5C6BC0" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#303F9F"/>
+                                <Setter Property="Background" Value="#303F9F" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -69,66 +73,80 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- 標題列 -->
-        <Border Grid.Row="0" Background="#0F0F0F" Padding="24,20">
+        <!--  標題列  -->
+        <Border
+            Grid.Row="0"
+            Padding="24,20"
+            Background="#0F0F0F">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="7*" />
+                    <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Logo -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Path Data="M12,2.5 L2,8.5 L2,16 L12,22 L22,16 L22,8.5 Z M10,18 L10,12 L16,15 Z" 
-                          Fill="#FF0000" 
-                          Width="32" 
-                          Height="32" 
-                          Stretch="Uniform"
-                          Margin="0,0,12,0"/>
-                    <TextBlock Text="YouTube Search" 
-                               FontSize="22" 
-                               FontWeight="Bold" 
-                               Foreground="White"
-                               VerticalAlignment="Center"/>
+                <!--  Logo  -->
+                <StackPanel
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <Path
+                        Width="32"
+                        Height="32"
+                        Margin="0,0,12,0"
+                        Data="M12,2.5 L2,8.5 L2,16 L12,22 L22,16 L22,8.5 Z M10,18 L10,12 L16,15 Z"
+                        Fill="#FF0000"
+                        Stretch="Uniform" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="YouTube Search" />
 
                 </StackPanel>
 
-                <!-- 搜尋列 -->
-                <Grid Grid.Column="1" MaxWidth="700" HorizontalAlignment="Center" Margin="40,0,0,0">
+                <!--  搜尋列  -->
+                <Grid
+                    Grid.Column="1"
+                    Margin="40,0,0,0"
+                    HorizontalAlignment="Center">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="300"/>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="300" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- 使用最簡單的 TextBox，帶有 Watermark -->
+                    <!--  使用最簡單的 TextBox，帶有 Watermark  -->
                     <Grid Grid.Column="0">
-                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                 Style="{StaticResource SearchTextBoxStyle}"
-                                 Height="44"
-                                 x:Name="SearchTextBox"/>
+                        <TextBox
+                            x:Name="SearchTextBox"
+                            Height="44"
+                            Style="{StaticResource SearchTextBoxStyle}"
+                            Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <!-- Placeholder 文字 -->
-                        <TextBlock Text="搜尋影片、頻道或播放清單..."
-                                   Foreground="#808080"
-                                   FontSize="16"
-                                   Margin="18,0,0,0"
-                                   VerticalAlignment="Center"
-                                   IsHitTestVisible="False">
+                        <!--  Placeholder 文字  -->
+                        <TextBlock
+                            Margin="18,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="#808080"
+                            IsHitTestVisible="False"
+                            Text="搜尋影片、頻道或播放清單...">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Setter Property="Visibility" Value="Collapsed" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="">
-                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Text, ElementName=SearchTextBox}" Value="{x:Null}">
-                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -136,43 +154,72 @@
                         </TextBlock>
                     </Grid>
 
-                    <Button Grid.Column="1"
-                            Content="🔍 搜尋"
-                            Command="{Binding SearchCommand}"
-                            Style="{StaticResource SearchButtonStyle}"
-                            Height="44"
-                            Margin="12,0,0,0" Cursor="Hand"/>
+                    <Button
+                        Grid.Column="1"
+                        Height="44"
+                        Margin="12,0,0,0"
+                        Command="{Binding SearchCommand}"
+                        Content="🔍 搜尋"
+                        Cursor="Hand"
+                        Style="{StaticResource SearchButtonStyle}" />
 
-                    <ToggleButton  Grid.Column="2"
-                             Content="☰ 篩選"
-                             Name="FilterToggleButton"
-                             Style="{StaticResource SearchButtonStyle}"
-                             Margin="12,0,0,0" Height="44" VerticalAlignment="Top"/>
+                    <ToggleButton
+                        Name="FilterToggleButton"
+                        Grid.Column="2"
+                        Height="44"
+                        Margin="12,0,0,0"
+                        VerticalAlignment="Top"
+                        Content="☰ 篩選"
+                        Style="{StaticResource SearchButtonStyle}" />
 
-                    <Popup IsOpen="{Binding IsChecked, ElementName=FilterToggleButton}"
-                           StaysOpen="False"
-                            Placement="Center"
-                            VerticalOffset="-220"
-                            PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
-                           PopupAnimation="Slide">
+                    <Popup
+                        IsOpen="{Binding IsChecked, ElementName=FilterToggleButton}"
+                        Placement="Center"
+                        PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                        PopupAnimation="Slide"
+                        StaysOpen="False"
+                        VerticalOffset="-220">
 
-                        <Border Background="#1F1F1F" 
-                                BorderBrush="#3F51B5" 
-                                BorderThickness="1" 
-                                CornerRadius="4"
-                                Padding="10">
-                            <filter:SearchFilter Command="{Binding DataContext.SearchConditionCommand,RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        <Border
+                            Padding="10"
+                            Background="#1F1F1F"
+                            BorderBrush="#3F51B5"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <filter:SearchFilter Command="{Binding DataContext.SearchConditionCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
                         </Border>
                     </Popup>
+
+
                 </Grid>
+                <!--  個人中心  -->
+                <Ellipse
+                    Grid.Column="3"
+                    Width="36"
+                    Height="36"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Right">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseLeftButtonUp">
+                            <i:InvokeCommandAction Command="{Binding ClickMyChannelImgCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{Binding MyChannelImgUrl}" Stretch="UniformToFill" />
+                    </Ellipse.Fill>
+                </Ellipse>
             </Grid>
         </Border>
 
-        <!-- 分隔線 -->
-        <Border Grid.Row="1" Height="1" Background="#303030"/>
+        <!--  分隔線  -->
+        <Border
+            Grid.Row="1"
+            Height="1"
+            Background="#303030" />
 
-        <Frame Grid.Row="2" x:Name="PageContainer" ClipToBounds="True">
-
-        </Frame>
+        <Frame
+            x:Name="PageContainer"
+            Grid.Row="2"
+            ClipToBounds="True" />
     </Grid>
 </Window>

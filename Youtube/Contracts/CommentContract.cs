@@ -26,15 +26,15 @@ namespace Youtube.Contracts
 
         public interface ICommentPresenter
         {
-            void LoadCommentsRequest(string videoId);
+            Task LoadCommentsRequest(string videoId);
             void LoadCommentsRatingRequest(List<CommentItemDTO> commentItemDTOs);
-            void AddCommentRequest(string videoId, string commentText);
-            void AddReplyCommentRequest(string parentId, string commentText);
-            void LoadReplyCommentsRequest(string parentId);
-            void DeleteCommentRequest(DeleteCommentDTO deleteCommentDTO);
-            void DeleteReplyCommentRequest(DeleteCommentDTO deleteCommentDTO);
-            void EditCommentRequest(string commentId, string commentText);
-            void EditReplyCommentRequest(string parentId, string commentId, string commentText);
+            Task AddCommentRequest(string videoId, string commentText);
+            Task AddReplyCommentRequest(string parentId, string commentText);
+            Task LoadReplyCommentsRequest(string parentId);
+            Task DeleteCommentRequest(DeleteCommentDTO deleteCommentDTO);
+            Task DeleteReplyCommentRequest(DeleteCommentDTO deleteCommentDTO);
+            Task EditCommentRequest(string commentId, string commentText);
+            Task EditReplyCommentRequest(string parentId, string commentId, string commentText);
         }
     }
 }

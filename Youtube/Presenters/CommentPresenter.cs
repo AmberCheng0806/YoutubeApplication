@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Youtube.Components.CommentComponent;
 using Youtube.Presenters.Models;
@@ -20,7 +21,7 @@ namespace Youtube.Presenters
             CommentView = view;
         }
 
-        public async void LoadCommentsRequest(string videoId)
+        public async Task LoadCommentsRequest(string videoId)
         {
             var comments = await youtubeContext.Comment.GetCommentByVideoIdAsync(videoId);
             int total = comments.items.Length;
@@ -40,7 +41,7 @@ namespace Youtube.Presenters
             CommentView.RenderComments(items);
         }
 
-        public async void AddCommentRequest(string videoId, string commentText)
+        public async Task AddCommentRequest(string videoId, string commentText)
         {
             var createComment = await youtubeContext.Comment.CreateCommentByVideoIdAsync(videoId, commentText);
             var comment = new CommentItemDTO(createComment.snippet.topLevelComment.snippet.authorDisplayName, commentText, commentText, createComment.id, createComment.snippet.topLevelComment.snippet.authorProfileImageUrl,
@@ -48,7 +49,7 @@ namespace Youtube.Presenters
             CommentView.AddComment(comment);
         }
 
-        public async void AddReplyCommentRequest(string parentId, string commentText)
+        public async Task AddReplyCommentRequest(string parentId, string commentText)
         {
             parentId = parentId.Split('.').FirstOrDefault();
             var createComment = await youtubeContext.Comment.CreateCommentByParentIdAsync(parentId, commentText);
@@ -57,7 +58,7 @@ namespace Youtube.Presenters
             CommentView.AddReplyComment(parentId, comment);
         }
 
-        public async void LoadReplyCommentsRequest(string parentId)
+        public async Task LoadReplyCommentsRequest(string parentId)
         {
             var comment = await youtubeContext.Comment.GetCommentByParentIdAsync(parentId);
             var replyComments = comment.items.Select(x =>
@@ -97,19 +98,19 @@ namespace Youtube.Presenters
 
         }
 
-        public async void DeleteCommentRequest(DeleteCommentDTO deleteCommentDTO)
+        public async Task DeleteCommentRequest(DeleteCommentDTO deleteCommentDTO)
         {
             var deleteComment = await youtubeContext.Comment.DeleteAsync(deleteCommentDTO.CommentId);
             CommentView.DeleteComment(deleteCommentDTO);
         }
 
-        public async void DeleteReplyCommentRequest(DeleteCommentDTO deleteCommentDTO)
+        public async Task DeleteReplyCommentRequest(DeleteCommentDTO deleteCommentDTO)
         {
             var deleteComment = await youtubeContext.Comment.DeleteAsync(deleteCommentDTO.CommentId);
             CommentView.DeleteReplyComment(deleteCommentDTO);
         }
 
-        public async void EditCommentRequest(string commentId, string commentText)
+        public async Task EditCommentRequest(string commentId, string commentText)
         {
             var updateComment = await youtubeContext.Comment.UpdateCommentByCommentIdAsync(commentId, commentText);
             var comment = new CommentItemDTO(updateComment.snippet.authorDisplayName, commentText, commentText, updateComment.id, updateComment.snippet.authorProfileImageUrl,
@@ -119,7 +120,7 @@ namespace Youtube.Presenters
             //CommentView.AddComment(comment);
         }
 
-        public async void EditReplyCommentRequest(string parentId, string commentId, string commentText)
+        public async Task EditReplyCommentRequest(string parentId, string commentId, string commentText)
         {
             parentId = parentId.Split('.').FirstOrDefault();
             var updateComment = await youtubeContext.Comment.UpdateCommentByCommentIdAsync(commentId, commentText);
@@ -129,5 +130,6 @@ namespace Youtube.Presenters
             //CommentView.DeleteReplyComment(parentId, commentId);
             //CommentView.AddReplyComment(parentId, comment);
         }
+
     }
 }

@@ -83,13 +83,20 @@ namespace Youtube.Presenters
         public async Task GetPlayListRequest()
         {
             var playList = await YoutubeContext.Playlist.GetAllAsync();
-            List<PlaylistItemDTO> playlistItemDTOs = new List<PlaylistItemDTO>();
-            foreach (var item in playList.items)
+            var tasks = playList.items.Select(async item =>
             {
-                (bool, string) isAddedResult = await IsAddedPlaylist(item.id, VideoTitle);
-                playlistItemDTOs.Add(new PlaylistItemDTO(item.id, item.snippet.title, isAddedResult.Item1, isAddedResult.Item2));
-            }
-            View.RenderPlayList(playlistItemDTOs);
+                var (isAdded, message) = await IsAddedPlaylist(item.id, VideoTitle);
+
+                return new PlaylistItemDTO(
+                    item.id,
+                    item.snippet.title,
+                    isAdded,
+                    message
+                );
+            });
+            // 平行執行+一次拿結果
+            var playlistItemDTOs = await Task.WhenAll(tasks);
+            View.RenderPlayList(playlistItemDTOs.ToList());
         }
 
         public async Task SavePlayListRequest(string playListId, string videoId)
@@ -102,6 +109,13 @@ namespace Youtube.Presenters
         {
             await YoutubeContext.PlayListItem.DeleteAsync(playListItemVideoId);
             View.RemovePlayListItemVideoId(playListItemVideoId);
+        }
+
+        public async Task CreatePlaylistRequest(string name, string status, string videoId)
+        {
+            var playlist = await YoutubeContext.Playlist.CreateAsync(name, status);
+            View.CreatePlaylist(new PlaylistItemDTO(playlist.id, playlist.snippet.title, true, ""));
+            await SavePlayListRequest(playlist.id, videoId);
         }
     }
 }
