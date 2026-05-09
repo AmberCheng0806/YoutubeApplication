@@ -358,18 +358,51 @@
                     Command="{Binding DataContext.AddReplyCommentCommand, RelativeSource={RelativeSource AncestorType=Page}}"
                     ParentId="{Binding DataContext.Id, RelativeSource={RelativeSource AncestorType=UserControl}}" />
             </Border>
+
             <!--  顯示該留言有幾則回覆  -->
             <Border Visibility="{Binding ReplyCommentCountVisibility}">
-                <TextBlock>
-                    <Run Text="{Binding ReplyCount}" />
-                    <Run Text="則回覆" />
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseLeftButtonUp">
-                            <!--<i:InvokeCommandAction Command="{Binding ShowReplyCommentsCommand}" />-->
-                            <i:InvokeCommandAction Command="{Binding DataContext.ShowReplyCommentsCommand, RelativeSource={RelativeSource AncestorType=Page}}" CommandParameter="{Binding}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </TextBlock>
+                <StackPanel Cursor="Hand" Orientation="Horizontal">
+                    <StackPanel.InputBindings>
+                        <MouseBinding
+                            Command="{Binding DataContext.ShowReplyCommentsCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                            CommandParameter="{Binding}"
+                            MouseAction="LeftClick" />
+                    </StackPanel.InputBindings>
+
+                    <!--  箭頭 icon，根據展開狀態切換  -->
+                    <Path
+                        Width="12"
+                        Height="12"
+                        Margin="0,0,4,0"
+                        VerticalAlignment="Center"
+                        Stroke="#1a73e8"
+                        StrokeEndLineCap="Round"
+                        StrokeLineJoin="Round"
+                        StrokeStartLineCap="Round"
+                        StrokeThickness="1.8">
+                        <Path.Style>
+                            <Style TargetType="Path">
+                                <!--  預設：向下箭頭（未展開）  -->
+                                <Setter Property="Data" Value="M 2,4 L 6,8 L 10,4" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ReplyCommentsCollectionVisibility}" Value="Visible">
+                                        <!--  展開後：向上箭頭  -->
+                                        <Setter Property="Data" Value="M 2,8 L 6,4 L 10,8" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
+                    </Path>
+                    <!--  文字  -->
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="13"
+                        FontWeight="Medium"
+                        Foreground="#1a73e8">
+                        <Run Text="{Binding ReplyCount}" />
+                        <Run Text="則回覆" />
+                    </TextBlock>
+                </StackPanel>
             </Border>
             <!--  該留言的子留言  -->
             <Border Visibility="{Binding ReplyCommentsCollectionVisibility}">
