@@ -88,6 +88,8 @@
     <Compile Include="Components\SearchFilterComponent\SearchFilterContext.cs" />
     <Compile Include="Components\SearchFilterComponent\SearchFilterDTO.cs" />
     <Compile Include="Contracts\CommentContract.cs" />
+    <Compile Include="Contracts\MemberCenterPlaylistsContract.cs" />
+    <Compile Include="Contracts\MemberCenterVideosContract.cs" />
     <Compile Include="Contracts\PaginationContract.cs" />
     <Compile Include="Contracts\VideoDetailContract.cs" />
     <Compile Include="Converters\InverseEditVisibilityConverter.cs" />
@@ -96,9 +98,13 @@
     <Compile Include="Converters\ViewCountConverter.cs" />
     <Compile Include="Presenters\CommentPresenter.cs" />
     <Compile Include="Presenters\Enums\VideoType.cs" />
+    <Compile Include="Presenters\MemberCenterPlaylistsPresenter.cs" />
+    <Compile Include="Presenters\MemberCenterVideosPresenter.cs" />
     <Compile Include="Presenters\Models\CommentItemDTO.cs" />
     <Compile Include="Presenters\Models\DeleteCommentDTO.cs" />
+    <Compile Include="Presenters\Models\MemberCenterPlaylistDTO.cs" />
     <Compile Include="Presenters\Models\MemberCenterPlaylistModel.cs" />
+    <Compile Include="Presenters\Models\MemberCenterVideoDTO.cs" />
     <Compile Include="Presenters\Models\MemberCenterVideoModel.cs" />
     <Compile Include="Presenters\Models\OptionsViewModel.cs" />
     <Compile Include="Presenters\Models\PlaylistItemDTO.cs" />

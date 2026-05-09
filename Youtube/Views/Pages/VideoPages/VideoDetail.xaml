@@ -5,6 +5,7 @@
     xmlns:Comment="clr-namespace:Youtube.Components.CommentComponent"
     xmlns:Playlist="clr-namespace:Youtube.Components.PlayListComponent"
     xmlns:Wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+    xmlns:converter="clr-namespace:Youtube.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helper="clr-namespace:Youtube.Utility"
     xmlns:local="clr-namespace:Youtube.Views.Pages.VideoPages"
@@ -17,6 +18,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <converter:InverseEditVisibilityConverter x:Key="InverseEditVisibilityConverter" />
         <!--  現代化按鈕樣式  -->
         <Style x:Key="ActionButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#272727" />
@@ -834,60 +836,62 @@
             Background="#0F0F0F"
             BorderBrush="#303030"
             BorderThickness="1,0,0,0">
-
             <StackPanel>
-                <!--  標題  -->
-                <TextBlock
-                    Margin="0,0,0,16"
-                    HorizontalAlignment="Center"
-                    FontSize="13"
-                    FontWeight="Medium"
-                    Foreground="#AAAAAA"
-                    Text="評論區" />
+                <TextBlock Text="私人影片不支援留言功能" Visibility="{Binding CommentsVisibility, Converter={StaticResource InverseEditVisibilityConverter}}" />
+                <StackPanel Visibility="{Binding CommentsVisibility}">
+                    <!--  標題  -->
+                    <TextBlock
+                        Margin="0,0,0,16"
+                        HorizontalAlignment="Center"
+                        FontSize="13"
+                        FontWeight="Medium"
+                        Foreground="#AAAAAA"
+                        Text="評論區" />
 
-                <!--  撰寫留言區塊  -->
-                <replycommentcomponent:ReplyComment CancelCommand="{Binding DataContext.ClearTopReplyCommentTextCommand, RelativeSource={RelativeSource AncestorType=Page}}" Command="{Binding DataContext.AddCommentCommand, RelativeSource={RelativeSource AncestorType=Page}}" />
+                    <!--  撰寫留言區塊  -->
+                    <replycommentcomponent:ReplyComment CancelCommand="{Binding DataContext.ClearTopReplyCommentTextCommand, RelativeSource={RelativeSource AncestorType=Page}}" Command="{Binding DataContext.AddCommentCommand, RelativeSource={RelativeSource AncestorType=Page}}" />
 
-                <!--  留言數量  -->
-                <TextBlock
-                    Margin="0,0,0,12"
-                    FontSize="14"
-                    FontWeight="Medium"
-                    Foreground="#CCCCCC">
-                    <Run Text="{Binding TotalComments}" />
-                    <Run Text=" 則留言" />
-                </TextBlock>
+                    <!--  留言數量  -->
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        FontSize="14"
+                        FontWeight="Medium"
+                        Foreground="#CCCCCC">
+                        <Run Text="{Binding TotalComments}" />
+                        <Run Text=" 則留言" />
+                    </TextBlock>
 
-                <!--  分隔線  -->
-                <Border
-                    Height="1"
-                    Margin="0,0,0,12"
-                    Background="#303030" />
+                    <!--  分隔線  -->
+                    <Border
+                        Height="1"
+                        Margin="0,0,0,12"
+                        Background="#303030" />
 
-                <!--  留言列表  -->
-                <ScrollViewer
-                    MaxHeight="700"
-                    HorizontalScrollBarVisibility="Disabled"
-                    VerticalScrollBarVisibility="Auto">
-                    <StackPanel>
-                        <ItemsControl ItemsSource="{Binding Comments}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Comment:Comment />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                    <!--  留言列表  -->
+                    <ScrollViewer
+                        MaxHeight="700"
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <ItemsControl ItemsSource="{Binding Comments}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Comment:Comment />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
 
-                        <!--  空狀態  -->
-                        <TextBlock
-                            Margin="0,24,0,0"
-                            HorizontalAlignment="Center"
-                            FontSize="13"
-                            Foreground="#555555"
-                            Text="目前還未有評論"
-                            Visibility="{Binding NoCommentsVisibility}" />
-                    </StackPanel>
-                </ScrollViewer>
+                            <!--  空狀態  -->
+                            <TextBlock
+                                Margin="0,24,0,0"
+                                HorizontalAlignment="Center"
+                                FontSize="13"
+                                Foreground="#555555"
+                                Text="目前還未有評論"
+                                Visibility="{Binding NoCommentsVisibility}" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </StackPanel>
             </StackPanel>
         </Border>
     </Grid>

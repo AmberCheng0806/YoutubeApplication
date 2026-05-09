@@ -41,6 +41,9 @@ namespace Youtube.Views.Pages.VideoPages
         public ObservableCollection<CommentItem> Comments { get; set; } = new ObservableCollection<CommentItem>();
         public bool IsSubscript { get; set; } = false;
         public string RateText { get; set; } = "";
+        public string VideoPrivacy { get; set; }
+        [DependsOn(nameof(VideoPrivacy))]
+        public Visibility CommentsVisibility => VideoPrivacy == "private" ? Visibility.Collapsed : Visibility.Visible;
         [DependsOn(nameof(TotalComments))]
         public Visibility NoCommentsVisibility => TotalComments == 0 ? Visibility.Visible : Visibility.Collapsed;
         [DependsOn(nameof(IsSubscript))]
@@ -74,6 +77,10 @@ namespace Youtube.Views.Pages.VideoPages
         }
         public async void OnNavigatedTo(object[] parameter)
         {
+
+            // textBox.Text = "Hello"
+            // Title = "Hello"
+
             VideoId = parameter[0] as string;
             await VideoDetailPresenter.GetVideoDetailRequest(VideoId);
             await Task.WhenAll(VideoDetailPresenter.GetPlayListRequest(), CommentPresenter.LoadCommentsRequest(VideoId));
@@ -238,6 +245,7 @@ namespace Youtube.Views.Pages.VideoPages
             ImageUrl = videoDetailDTO.ImageUrl;
             IsSubscript = videoDetailDTO.IsSubscript;
             RateText = videoDetailDTO.RateText;
+            VideoPrivacy = videoDetailDTO.VideoPrivacy;
         }
 
         public void RenderPlayList(List<PlaylistItemDTO> playlistItemDTOs)

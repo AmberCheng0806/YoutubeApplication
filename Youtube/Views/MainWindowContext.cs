@@ -27,6 +27,7 @@ namespace Youtube.Views
         public string Title { get; set; } = "Hello World";
         public string SearchText { get; set; }
         public string MyChannelImgUrl { get; set; } = App.ChannelImg;
+        public bool IsFilterConditionPopup { get; set; } = false;
         public ICommand SearchCommand { get; set; }
         public ICommand SearchConditionCommand { get; set; }
         public ICommand ClickMyChannelImgCommand { get; set; }
@@ -38,7 +39,7 @@ namespace Youtube.Views
         {
             NavigationService = navigationService;
             //presenter = new SearchPresenter(this);
-            SearchConditionCommand = new RelayCommand<SearchFilterDTO>(x => this.SearchFilter = x);
+            SearchConditionCommand = new RelayCommand<SearchFilterDTO>(x => { this.SearchFilter = x; IsFilterConditionPopup = false; });
             SearchCommand = new RelayCommand(() =>
             {
                 navigationService.Navigate("VideoSearch", CreateSearchRequest());

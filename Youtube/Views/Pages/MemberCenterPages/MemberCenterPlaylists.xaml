@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converter="clr-namespace:Youtube.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:Youtube.Views.Pages.MemberCenterPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MemberCenterPlaylists"
@@ -16,10 +17,9 @@
         <converter:PrivacyConverter x:Key="PrivacyConverter" />
         <converter:InverseEditVisibilityConverter x:Key="InverseEditVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="VisibilityToBoolConverter" />
-
         <!--  按鈕樣式：主要紅色（刪除）  -->
         <Style x:Key="PrimaryButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="red" />
+            <Setter Property="Background" Value="#FFE14444" />
             <Setter Property="Foreground" Value="#AAAAAA" />
             <Setter Property="BorderBrush" Value="#3F3F3F" />
             <Setter Property="BorderThickness" Value="1" />
@@ -39,14 +39,13 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#3A3A3A" />
+                                <Setter Property="Background" Value="#FFDF1111" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!--  按鈕樣式：次要灰色（編輯、取消）  -->
         <Style x:Key="SecondaryButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
@@ -149,8 +148,7 @@
         </Style>
 
         <!--  ComboBox 樣式  -->
-        <!--
-        <Style x:Key="PrivacyComboBoxStyle" TargetType="ComboBox">
+        <!--<Style x:Key="PrivacyComboBoxStyle" TargetType="ComboBox">
             <Setter Property="Background" Value="#272727" />
             <Setter Property="Foreground" Value="#FFFFFF" />
             <Setter Property="BorderBrush" Value="#3A3A3A" />
@@ -175,7 +173,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="16" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!--  頁面標題  -->
@@ -188,6 +188,7 @@
                     Foreground="#FFFFFF"
                     Text="播放清單" />
                 <Border
+                    Grid.Row="1"
                     Margin="12,0,0,0"
                     Padding="10,3"
                     VerticalAlignment="Center"
@@ -201,8 +202,51 @@
                 </Border>
             </StackPanel>
 
+            <!--  播放清單列表標題  -->
+            <Border
+                Grid.Row="2"
+                BorderBrush="#272727"
+                BorderThickness="0,0,0,1">
+                <Grid Height="40" Margin="12,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="300" />
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Foreground="#606060"
+                        Text="播放清單" />
+
+                    <TextBlock
+                        Grid.Column="3"
+                        VerticalAlignment="Center"
+                        Foreground="#606060"
+                        Text="瀏覽權限" />
+
+                    <TextBlock
+                        Grid.Column="4"
+                        VerticalAlignment="Center"
+                        Foreground="#606060"
+                        Text="建立時間" />
+
+                    <TextBlock
+                        Grid.Column="5"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="#606060"
+                        Text="影片數量" />
+                </Grid>
+            </Border>
+
             <!--  播放清單列表  -->
-            <ItemsControl Grid.Row="2" ItemsSource="{Binding Playlists}">
+            <ItemsControl Grid.Row="3" ItemsSource="{Binding Playlists}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Vertical" />
@@ -234,21 +278,25 @@
                                         <ColumnDefinition Width="80" />
                                         <ColumnDefinition Width="180" />
                                         <ColumnDefinition Width="300" />
-                                        <ColumnDefinition Width="180" />
-                                        <ColumnDefinition Width="180" />
-                                        <ColumnDefinition Width="180" />
+                                        <ColumnDefinition Width="200" />
+                                        <ColumnDefinition Width="200" />
+                                        <ColumnDefinition Width="200" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <!--  播放清單封面  -->
+
                                     <!--  展開影片清單  -->
                                     <ToggleButton
                                         Grid.Column="0"
                                         Margin="0,0,6,0"
                                         Command="{Binding ExpandVideosCommand}"
-                                        IsChecked="{Binding ExpandVideosVisibility, Converter={StaticResource VisibilityToBoolConverter}}"
+                                        IsChecked="{Binding IsExpanded, Mode=OneWay}"
                                         Style="{StaticResource ExpandToggleButtonStyle}"
-                                        ToolTip="展開影片清單" />
+                                        ToolTip="展開影片清單"
+                                        Visibility="{Binding ExpandVideosBtnVisibility}" />
+
+
+                                    <!--  播放清單封面  -->
                                     <Border
                                         Grid.Column="1"
                                         Margin="0,0,16,0"
@@ -460,18 +508,11 @@
                                                 </Style>
                                             </ComboBox.Style>
                                         </ComboBox>
-
                                     </StackPanel>
 
                                     <!--  建立日期  -->
                                     <StackPanel Grid.Column="4" VerticalAlignment="Center">
                                         <TextBlock
-                                            FontFamily="Segoe UI"
-                                            FontSize="11"
-                                            Foreground="#606060"
-                                            Text="建立日期" />
-                                        <TextBlock
-                                            Margin="0,3,0,0"
                                             FontFamily="Segoe UI"
                                             FontSize="13"
                                             Foreground="#AAAAAA"
@@ -566,6 +607,11 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Border Padding="12,8">
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="MouseLeftButtonUp">
+                                                            <i:InvokeCommandAction Command="{Binding DataContext.ClickVideoCommand, RelativeSource={RelativeSource AncestorType=Page}}" CommandParameter="{Binding VideoId}" />
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
                                                     <Border.Style>
                                                         <Style TargetType="Border">
                                                             <Style.Triggers>
@@ -581,18 +627,10 @@
                                                             <ColumnDefinition Width="100" />
                                                             <ColumnDefinition Width="*" />
                                                             <ColumnDefinition Width="160" />
-                                                            <ColumnDefinition Width="100" />
+                                                            <ColumnDefinition Width="160" />
                                                         </Grid.ColumnDefinitions>
 
                                                         <!--  序號  -->
-                                                        <!--<TextBlock
-                                                            Grid.Column="0"
-                                                            VerticalAlignment="Center"
-                                                            FontFamily="Segoe UI"
-                                                            FontSize="13"
-                                                            Foreground="#606060"
-                                                            Text="{Binding Position}"
-                                                            TextAlignment="Center" />-->
                                                         <TextBlock Grid.Column="0" Text="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}" />
 
                                                         <!--  影片縮圖  -->
@@ -638,7 +676,6 @@
                                                             CommandParameter="{Binding}"
                                                             Content="刪除"
                                                             Style="{StaticResource PrimaryButtonStyle}" />
-
                                                     </Grid>
                                                 </Border>
                                             </DataTemplate>
@@ -651,6 +688,150 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
+
+            <!--  新增播放清單  -->
+            <ToggleButton
+                Name="PlaylistToggleButton"
+                Grid.Row="4"
+                Width="100"
+                Content="新增播放清單">
+                <ToggleButton.Template>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border
+                            x:Name="Bd"
+                            Background="#1A73E8"
+                            CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#5C6BC0" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </ToggleButton.Template>
+            </ToggleButton>
+            <!--  新增播放清單彈窗  -->
+            <Popup IsOpen="{Binding IsChecked, ElementName=PlaylistToggleButton}">
+                <StackPanel>
+                    <TextBox Text="{Binding PlaylistTitle}" />
+                    <TextBox Text="{Binding PlaylistDescription}" />
+                    <ComboBox
+                        Margin="0,0,0,16"
+                        Background="#121212"
+                        BorderBrush="#3A3A3A"
+                        BorderThickness="1"
+                        DisplayMemberPath="DisplayName"
+                        FontSize="13"
+                        Foreground="#121212"
+                        IsEditable="True"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding Status}"
+                        SelectedValue="{Binding PlaylistPrivacy}"
+                        SelectedValuePath="Key">
+                        <ComboBox.Template>
+                            <ControlTemplate TargetType="ComboBox">
+                                <Grid>
+                                    <ToggleButton
+                                        x:Name="ToggleButton"
+                                        Height="42"
+                                        Background="#121212"
+                                        BorderThickness="1"
+                                        IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="4">
+                                                    <Path
+                                                        Margin="0,0,12,0"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Center"
+                                                        Data="M 0 0 L 4 4 L 8 0 Z"
+                                                        Fill="White" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+
+                                    <TextBlock
+                                        Margin="12,0,36,0"
+                                        VerticalAlignment="Center"
+                                        FontFamily="Segoe UI, Microsoft JhengHei UI, 微軟正黑體"
+                                        FontSize="13"
+                                        Foreground="#CCCCCC"
+                                        IsHitTestVisible="False"
+                                        Text="{Binding SelectedItem.DisplayName, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                                    <Popup
+                                        x:Name="PART_Popup"
+                                        AllowsTransparency="True"
+                                        Focusable="False"
+                                        IsOpen="{TemplateBinding IsDropDownOpen}"
+                                        Placement="Bottom"
+                                        PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        PopupAnimation="Slide"
+                                        StaysOpen="False">
+                                        <Border
+                                            MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                            Background="#2D2D30"
+                                            BorderBrush="#3F3F46"
+                                            BorderThickness="1"
+                                            CornerRadius="4">
+                                            <ScrollViewer Margin="1" SnapsToDevicePixels="True">
+                                                <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </ControlTemplate>
+                        </ComboBox.Template>
+
+                        <ComboBox.Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="FontFamily" Value="Segoe UI, Microsoft JhengHei UI, 微軟正黑體" />
+                                <Setter Property="FontSize" Value="13" />
+                                <Setter Property="Foreground" Value="#CCCCCC" />
+                                <Setter Property="Background" Value="#121212" />
+                                <Setter Property="ItemContainerStyle">
+                                    <Setter.Value>
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="FontFamily" Value="Segoe UI, Microsoft JhengHei UI, 微軟正黑體" />
+                                            <Setter Property="FontSize" Value="13" />
+                                            <Setter Property="Foreground" Value="#CCCCCC" />
+                                            <Setter Property="Padding" Value="12,10" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ComboBoxItem">
+                                                        <Border
+                                                            x:Name="itemBorder"
+                                                            Padding="{TemplateBinding Padding}"
+                                                            Background="#121212">
+                                                            <TextBlock Foreground="#CCCCCC" Text="{Binding DisplayName}" />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="itemBorder" Property="Background" Value="#3A3A3A" />
+                                                            </Trigger>
+                                                            <Trigger Property="IsSelected" Value="True">
+                                                                <Setter TargetName="itemBorder" Property="Background" Value="#3F51B5" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Style>
+                    </ComboBox>
+                    <Button Command="{Binding CreatePlaylistCommand}" Content="確定" />
+                </StackPanel>
+            </Popup>
         </Grid>
     </ScrollViewer>
 </Page>

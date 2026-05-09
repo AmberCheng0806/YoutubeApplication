@@ -45,7 +45,8 @@ namespace Youtube.Presenters
             string imageUrl = channel.items[0].snippet.thumbnails.medium.url;
             var rate = await YoutubeContext.Video.GetRateAsync(videoId);
             RateText = rate.items[0].rating;
-            View.RenderVideoDetail(new Models.VideoDetailDTO(VideoTitle, videoDescription, channelTitle, publishedAt, viewCount, likeCount, imageUrl, IsSubscribed, RateText));
+            string privacy = videostatics.items[0].status.privacyStatus;
+            View.RenderVideoDetail(new Models.VideoDetailDTO(VideoTitle, videoDescription, channelTitle, publishedAt, viewCount, likeCount, imageUrl, IsSubscribed, RateText, privacy));
         }
 
         public async Task SubscriptRequest()

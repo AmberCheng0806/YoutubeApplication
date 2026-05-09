@@ -13,6 +13,7 @@ using Youtube.Presenters;
 using Youtube.Presenters.Models;
 using Youtube.Utility.Service;
 using YoutubeAPI;
+using YoutubeAPI.Video.Models;
 using static Youtube.Contracts.MemberCenterVideosContract;
 
 namespace Youtube.Views.Pages.MemberCenterPages
@@ -41,21 +42,9 @@ namespace Youtube.Views.Pages.MemberCenterPages
         {
             memberCenterVideosPresenter = new MemberCenterVideosPresenter(this);
         }
-        public void DeleteVideo(string videoId)
-        {
-            throw new NotImplementedException();
-        }
 
         public async void OnNavigatedTo(object[] parameter)
         {
-            //var search = await YoutubeContext.Search.GetMyVideos();
-            //string videoString = string.Join(",", search.items.Select(x => x.id.videoId).ToArray());
-            //var videoDetail = await YoutubeContext.Video.GetByVideoIdAsync(videoString);
-            //foreach (var item in videoDetail.items)
-            //{
-            //    Videos.Add(new MemberCenterVideoModel(item.snippet.thumbnails.medium.url, item.snippet.title, item.snippet.description, item.status.privacyStatus, item.snippet.publishedAt, item.statistics.viewCount, item.statistics.commentCount, item.statistics.likeCount, item.statistics.dislikeCount,
-            //        item.id, item.snippet.categoryId, item.snippet.title, item.snippet.description, item.status.privacyStatus));
-            //}
             await memberCenterVideosPresenter.GetMyVideosRequest();
             SelectVideoCommand = new RelayCommand(() =>
             {
@@ -65,23 +54,15 @@ namespace Youtube.Views.Pages.MemberCenterPages
             });
             UploadVideoCommand = new RelayCommand(async () =>
             {
-                var createVideo = await YoutubeContext.Video.CreateAsync(VideoTitle, VideoUrl, VideoPrivacyStatus);
-                Videos.Add(new MemberCenterVideoModel(createVideo.snippet.thumbnails.medium.url, VideoTitle, VideoDescription, VideoPrivacyStatus, createVideo.snippet.publishedAt, "0", "0", "0", "0", createVideo.id, createVideo.snippet.categoryId, createVideo.snippet.title, createVideo.snippet.description, VideoPrivacyStatus));
-                VideoTitle = "";
-                VideoPrivacyStatus = "public";
-                VideoUrl = "";
-                VideoDescription = "";
-                SelectVideoBtnText = "選擇影片";
+                await memberCenterVideosPresenter.UploadVideoRequest(VideoTitle, VideoDescription, VideoUrl, VideoPrivacyStatus);
             });
             DeleteVideoCommand = new RelayCommand<MemberCenterVideoModel>(async x =>
             {
-                await YoutubeContext.Video.DeleteAsync(x.VideoId);
-                MemberCenterVideoModel video = Videos.FirstOrDefault(y => y.VideoId == x.VideoId);
-                Videos.Remove(video);
+                await memberCenterVideosPresenter.DeleteVideoRequest(x.VideoId);
             });
             SaveCommand = new RelayCommand<MemberCenterVideoModel>(async x =>
             {
-                await YoutubeContext.Video.UpdateAsync(x.VideoId, x.VideoTitle, x.CategoryId, x.VideoDescription, x.PrivacyStatus);
+                await memberCenterVideosPresenter.UpdateVideoRequest(x.VideoId, x.VideoTitle, x.CategoryId, x.VideoDescription, x.PrivacyStatus);
                 x.OriginalVideoTitle = x.VideoTitle;
                 x.OriginalVideoDescription = x.VideoDescription;
                 x.OriginalVideoPrivacy = x.PrivacyStatus;
@@ -103,14 +84,20 @@ namespace Youtube.Views.Pages.MemberCenterPages
             Videos = new ObservableCollection<MemberCenterVideoModel>(models);
         }
 
-        public void UpdateVideo(MemberCenterVideoDTO memberCenterVideoDTO)
-        {
-            throw new NotImplementedException();
-        }
-
         public void UploadVideo(MemberCenterVideoDTO memberCenterVideoDTO)
         {
-            throw new NotImplementedException();
+            MemberCenterVideoModel member = AutoMapper.AutoMapper.Map<MemberCenterVideoDTO, MemberCenterVideoModel>(memberCenterVideoDTO);
+            Videos.Add(member);
+            VideoTitle = "";
+            VideoPrivacyStatus = "public";
+            VideoUrl = "";
+            VideoDescription = "";
+            SelectVideoBtnText = "選擇影片";
+        }
+        public void DeleteVideo(string videoId)
+        {
+            MemberCenterVideoModel video = Videos.FirstOrDefault(y => y.VideoId == videoId);
+            Videos.Remove(video);
         }
     }
 }

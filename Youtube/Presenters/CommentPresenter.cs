@@ -24,6 +24,7 @@ namespace Youtube.Presenters
         public async Task LoadCommentsRequest(string videoId)
         {
             var comments = await youtubeContext.Comment.GetCommentByVideoIdAsync(videoId);
+            if (comments.items == null) { CommentView.RenderComments(new List<CommentItemDTO>()); return; }
             int total = comments.items.Length;
             foreach (var item in comments.items)
             {

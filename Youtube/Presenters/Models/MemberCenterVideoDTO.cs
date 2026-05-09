@@ -1,17 +1,12 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using PropertyChanged;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
 
 namespace Youtube.Presenters.Models
 {
-    [AddINotifyPropertyChangedInterface]
-    internal class MemberCenterVideoModel
+    internal class MemberCenterVideoDTO
     {
         public string VideoImg { get; set; }
         public string VideoTitle { get; set; }
@@ -27,10 +22,8 @@ namespace Youtube.Presenters.Models
         public string OriginalVideoTitle { get; set; }
         public string OriginalVideoDescription { get; set; }
         public string OriginalVideoPrivacy { get; set; }
-        public Visibility EditVideoModeVisibility { get; set; } = Visibility.Collapsed;
-        public List<OptionsViewModel> Status { get; set; } = new List<OptionsViewModel>() { new OptionsViewModel("public", "公開"), new OptionsViewModel("unlisted", "不公開"), new OptionsViewModel("private", "私人") };
-        public ICommand EditVideoCommand { get; set; }
-        public MemberCenterVideoModel(string videoImg, string videoTitle, string videoDescription, string privacyStatus, DateTime publishedTime, string viewCount, string commentsCount, string likeCount, string disLikeCount, string videoId, string categoryId, string originalVideoTitle, string originalVideoDescription, string originalPrivacyStatus)
+
+        public MemberCenterVideoDTO(string videoImg, string videoTitle, string videoDescription, string privacyStatus, DateTime publishedTime, string viewCount, string commentsCount, string likeCount, string disLikeCount, string videoId, string categoryId, string originalVideoTitle, string originalVideoDescription, string originalVideoPrivacy)
         {
             VideoImg = videoImg;
             VideoTitle = videoTitle;
@@ -45,14 +38,8 @@ namespace Youtube.Presenters.Models
             CategoryId = categoryId;
             OriginalVideoTitle = originalVideoTitle;
             OriginalVideoDescription = originalVideoDescription;
-            OriginalVideoPrivacy = originalPrivacyStatus;
+            OriginalVideoPrivacy = originalVideoPrivacy;
         }
-        public MemberCenterVideoModel()
-        {
-            EditVideoCommand = new RelayCommand(() =>
-            {
-                EditVideoModeVisibility = EditVideoModeVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
-            });
-        }
+        public MemberCenterVideoDTO() { }
     }
 }

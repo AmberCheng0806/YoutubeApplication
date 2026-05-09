@@ -17,8 +17,9 @@ namespace Youtube.Presenters.Models
         public string ImageUrl { get; set; }
         public bool IsSubscript { get; set; } = false;
         public string RateText { get; set; } = "";
+        public string VideoPrivacy { get; set; }
 
-        public VideoDetailDTO(string videoTitle, string videoDescription, string channelTitle, DateTime publishedAt, string viewCount, string likeCount, string imageUrl, bool isSubscript, string rateText)
+        public VideoDetailDTO(string videoTitle, string videoDescription, string channelTitle, DateTime publishedAt, string viewCount, string likeCount, string imageUrl, bool isSubscript, string rateText, string videoPrivacy)
         {
             VideoTitle = videoTitle;
             VideoDescription = videoDescription;
@@ -29,6 +30,7 @@ namespace Youtube.Presenters.Models
             ImageUrl = imageUrl;
             IsSubscript = isSubscript;
             RateText = rateText;
+            VideoPrivacy = videoPrivacy;
         }
         public VideoDetailDTO() { }
     }
