@@ -23,9 +23,9 @@ namespace Youtube.Views.Pages.MemberCenterPages
     {
         public ObservableCollection<MemberCenterPlaylistModel> Playlists { get; set; } = new ObservableCollection<MemberCenterPlaylistModel>();
         public YoutubeContext YoutubeContext { get; set; } = new YoutubeContext();
-        public string PlaylistTitle { get; set; }
-        public string PlaylistDescription { get; set; }
-        public string PlaylistPrivacy { get; set; }
+        public string PlaylistTitle { get; set; } = "";
+        public string PlaylistDescription { get; set; } = "";
+        public string PlaylistPrivacy { get; set; } = "public";
         public INavigationService NavigationService { get; set; } = App.NavigationService;
         public List<OptionsViewModel> Status { get; set; } = new List<OptionsViewModel>() { new OptionsViewModel("public", "公開"), new OptionsViewModel("unlisted", "不公開"), new OptionsViewModel("private", "私人") };
         public ICommand DeletePlaylistCommand { get; set; }
@@ -72,7 +72,11 @@ namespace Youtube.Views.Pages.MemberCenterPages
                 await MemberCenterPlaylistsPresenter.DeleteVideoRequest(x.PlaylistVideoId);
             });
             ClickVideoCommand = new RelayCommand<string>(x => NavigationService.Navigate("VideoDetail", x));
-            CreatePlaylistCommand = new RelayCommand(async () => await MemberCenterPlaylistsPresenter.CreatePlaylistRequest(PlaylistTitle, PlaylistPrivacy, PlaylistDescription));
+            CreatePlaylistCommand = new RelayCommand(async () =>
+            {
+                if (PlaylistTitle == "") return;
+                await MemberCenterPlaylistsPresenter.CreatePlaylistRequest(PlaylistTitle, PlaylistPrivacy, PlaylistDescription);
+            });
         }
 
         public void RenderPlaylists(List<MemberCenterPlaylistDTO> memberCenterPlaylistDTOs)
