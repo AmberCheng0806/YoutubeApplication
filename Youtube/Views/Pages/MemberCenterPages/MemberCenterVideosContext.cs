@@ -23,10 +23,10 @@ namespace Youtube.Views.Pages.MemberCenterPages
     {
         public ObservableCollection<MemberCenterVideoModel> Videos { get; set; } = new ObservableCollection<MemberCenterVideoModel>();
         public YoutubeContext YoutubeContext { get; set; } = new YoutubeContext();
-        public string VideoTitle { get; set; }
-        public string VideoDescription { get; set; }
-        public string VideoPrivacyStatus { get; set; }
-        public string VideoUrl { get; set; }
+        public string VideoTitle { get; set; } = "";
+        public string VideoDescription { get; set; } = "";
+        public string VideoPrivacyStatus { get; set; } = "public";
+        public string VideoUrl { get; set; } = "";
         public string SelectVideoBtnText { get; set; } = "選擇影片";
         public List<OptionsViewModel> Status { get; set; } = new List<OptionsViewModel>() { new OptionsViewModel("public", "公開"), new OptionsViewModel("unlisted", "不公開"), new OptionsViewModel("private", "私人") };
         public INavigationService NavigationService { get; set; } = App.NavigationService;
@@ -36,6 +36,7 @@ namespace Youtube.Views.Pages.MemberCenterPages
         public ICommand SaveCommand { get; set; }
         public ICommand CancelCommand { get; set; }
         public ICommand ClickVideoCommand { get; set; }
+        public ICommand CancelUploadVideosCommand { get; set; }
         private IMemberCenterVideosPresenter memberCenterVideosPresenter { get; set; }
 
         public MemberCenterVideosContext()
@@ -54,6 +55,7 @@ namespace Youtube.Views.Pages.MemberCenterPages
             });
             UploadVideoCommand = new RelayCommand(async () =>
             {
+                if (VideoTitle == "" || VideoUrl == "") return;
                 await memberCenterVideosPresenter.UploadVideoRequest(VideoTitle, VideoDescription, VideoUrl, VideoPrivacyStatus);
             });
             DeleteVideoCommand = new RelayCommand<MemberCenterVideoModel>(async x =>
@@ -76,6 +78,14 @@ namespace Youtube.Views.Pages.MemberCenterPages
                 x.EditVideoModeVisibility = Visibility.Collapsed;
             });
             ClickVideoCommand = new RelayCommand<string>(x => NavigationService.Navigate("VideoDetail", x));
+            CancelUploadVideosCommand = new RelayCommand(() =>
+            {
+                VideoTitle = "";
+                VideoDescription = "";
+                VideoPrivacyStatus = "public";
+                SelectVideoBtnText = "選擇影片";
+                VideoUrl = "";
+            });
         }
 
         public void RenderVideos(List<MemberCenterVideoDTO> memberCenterVideoDTOs)
