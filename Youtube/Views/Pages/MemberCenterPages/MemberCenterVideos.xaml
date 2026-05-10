@@ -15,6 +15,21 @@
     <Page.Resources>
         <converter:PrivacyConverter x:Key="PrivacyConverter" />
         <converter:InverseEditVisibilityConverter x:Key="InverseEditVisibilityConverter" />
+        <!--  文字框樣式  -->
+        <Style x:Key="EditTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="#272727" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="BorderBrush" Value="#3A3A3A" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="CaretBrush" Value="White" />
+        </Style>
+        <!--  隱私狀態 Badge  -->
+        <Style x:Key="PrivacyBadgeStyle" TargetType="Border">
+            <Setter Property="Background" Value="#272727" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="8,3" />
+        </Style>
         <!--  按鈕樣式：主要紅色（刪除）  -->
         <Style x:Key="PrimaryButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#FFE14444" />
@@ -107,9 +122,101 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="40" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ItemsControl Grid.Row="0" ItemsSource="{Binding Videos}">
+
+        <!--  頁面標題  -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="24,20,24,0"
+            Orientation="Horizontal">
+            <TextBlock
+                VerticalAlignment="Center"
+                FontFamily="Segoe UI"
+                FontSize="22"
+                FontWeight="SemiBold"
+                Foreground="#FFFFFF"
+                Text="影片" />
+            <Border
+                Margin="12,0,0,0"
+                Padding="10,3"
+                VerticalAlignment="Center"
+                Background="#272727"
+                CornerRadius="12">
+                <TextBlock
+                    FontFamily="Segoe UI"
+                    FontSize="13"
+                    Foreground="#AAAAAA"
+                    Text="{Binding Videos.Count, StringFormat={}{0} 部影片}" />
+            </Border>
+        </StackPanel>
+
+        <!--  列表欄位標題  -->
+        <Border
+            Grid.Row="1"
+            Margin="24,12,24,0"
+            BorderBrush="#272727"
+            BorderThickness="0,0,0,1">
+            <Grid Height="40">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="70" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    Foreground="#606060"
+                    Text="影片" />
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Foreground="#606060"
+                    Text="標題／描述" />
+                <TextBlock
+                    Grid.Column="2"
+                    VerticalAlignment="Center"
+                    Foreground="#606060"
+                    Text="瀏覽權限" />
+                <TextBlock
+                    Grid.Column="3"
+                    VerticalAlignment="Center"
+                    Foreground="#606060"
+                    Text="發布時間" />
+                <TextBlock
+                    Grid.Column="4"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="#606060"
+                    Text="觀看數" />
+                <TextBlock
+                    Grid.Column="5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="#606060"
+                    Text="留言數" />
+                <TextBlock
+                    Grid.Column="6"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="#606060"
+                    Text="喜歡／不喜歡" />
+            </Grid>
+        </Border>
+
+        <ItemsControl
+            Grid.Row="2"
+            Margin="24,0"
+            ItemsSource="{Binding Videos}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Vertical" />
@@ -135,9 +242,9 @@
                                 <ColumnDefinition Width="150" />
                                 <ColumnDefinition Width="150" />
                                 <ColumnDefinition Width="180" />
-                                <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="70" />
+                                <ColumnDefinition Width="70" />
+                                <ColumnDefinition Width="70" />
                             </Grid.ColumnDefinitions>
 
                             <Grid Grid.Column="0" Margin="0,0,15,0">
@@ -155,9 +262,10 @@
                                     Text="{Binding VideoTitle}"
                                     Visibility="{Binding EditVideoModeVisibility, Converter={StaticResource InverseEditVisibilityConverter}}" />
                                 <TextBox
-                                    Margin="0,0,0,5"
+                                    Margin="0,0,12,5"
                                     FontSize="14"
                                     FontWeight="Bold"
+                                    Style="{StaticResource EditTextBoxStyle}"
                                     Text="{Binding VideoTitle}"
                                     Visibility="{Binding EditVideoModeVisibility}" />
                                 <TextBlock
@@ -166,8 +274,10 @@
                                     Text="{Binding VideoDescription}"
                                     Visibility="{Binding EditVideoModeVisibility, Converter={StaticResource InverseEditVisibilityConverter}}" />
                                 <TextBox
+                                    Margin="0,0,12,5"
                                     FontSize="12"
                                     Foreground="Gray"
+                                    Style="{StaticResource EditTextBoxStyle}"
                                     Text="{Binding VideoDescription}"
                                     Visibility="{Binding EditVideoModeVisibility}" />
                             </StackPanel>
@@ -176,10 +286,14 @@
                                 Grid.Column="2"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center">
-                                <TextBlock
-                                    FontSize="12"
-                                    Text="{Binding PrivacyStatus, Converter={StaticResource PrivacyConverter}}"
-                                    Visibility="{Binding EditVideoModeVisibility, Converter={StaticResource InverseEditVisibilityConverter}}" />
+                                <Border Style="{StaticResource PrivacyBadgeStyle}" Visibility="{Binding EditPlaylistModeVisibility, Converter={StaticResource InverseEditVisibilityConverter}}">
+                                    <TextBlock
+                                        FontFamily="Segoe UI"
+                                        FontSize="12"
+                                        Foreground="#AAAAAA"
+                                        Text="{Binding PrivacyStatus, Converter={StaticResource PrivacyConverter}}"
+                                        Visibility="{Binding EditVideoModeVisibility, Converter={StaticResource InverseEditVisibilityConverter}}" />
+                                </Border>
                                 <ComboBox
                                     Margin="0,0,0,16"
                                     Background="#121212"
@@ -298,7 +412,9 @@
                             <TextBlock
                                 Grid.Column="3"
                                 VerticalAlignment="Center"
-                                Foreground="#606060"
+                                FontFamily="Segoe UI"
+                                FontSize="13"
+                                Foreground="#AAAAAA"
                                 Text="{Binding PublishedTime, StringFormat=\{0:yyyy年MM月dd日\}}" />
 
                             <TextBlock
@@ -369,145 +485,275 @@
         </ItemsControl>
         <ToggleButton
             Name="VideoToggleButton"
-            Grid.Row="1"
-            Width="100"
-            Content="新增影片">
+            Grid.Row="3"
+            Width="140"
+            Height="36"
+            Margin="0,16,0,0"
+            Cursor="Hand">
             <ToggleButton.Template>
                 <ControlTemplate TargetType="ToggleButton">
                     <Border
                         x:Name="Bd"
                         Background="#1A73E8"
-                        CornerRadius="6">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        CornerRadius="20">
+                        <StackPanel
+                            Margin="12,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                Margin="0,0,6,0"
+                                FontFamily="Segoe UI"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Text="+" />
+                            <TextBlock
+                                FontFamily="Segoe UI"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Text="新增影片" />
+                        </StackPanel>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="#5C6BC0" />
+                            <Setter TargetName="Bd" Property="Background" Value="#1557B0" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#1557B0" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </ToggleButton.Template>
         </ToggleButton>
+
         <!--  上傳影片彈窗  -->
-        <Popup IsOpen="{Binding IsChecked, ElementName=VideoToggleButton}">
-            <StackPanel>
-                <TextBox Text="{Binding VideoTitle}" />
-                <TextBox Text="{Binding VideoDescription}" />
-                <ComboBox
-                    Margin="0,0,0,16"
-                    Background="#121212"
-                    BorderBrush="#3A3A3A"
-                    BorderThickness="1"
-                    DisplayMemberPath="DisplayName"
-                    FontSize="13"
-                    Foreground="#121212"
-                    IsEditable="True"
-                    IsReadOnly="True"
-                    ItemsSource="{Binding Status}"
-                    SelectedValue="{Binding VideoPrivacyStatus}"
-                    SelectedValuePath="Key">
-                    <ComboBox.Template>
-                        <ControlTemplate TargetType="ComboBox">
-                            <Grid>
-                                <ToggleButton
-                                    x:Name="ToggleButton"
-                                    Height="42"
-                                    Background="#121212"
-                                    BorderThickness="1"
-                                    IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <ToggleButton.Template>
-                                        <ControlTemplate TargetType="ToggleButton">
-                                            <Border
-                                                Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                CornerRadius="4">
-                                                <Path
-                                                    Margin="0,0,12,0"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Center"
-                                                    Data="M 0 0 L 4 4 L 8 0 Z"
-                                                    Fill="White" />
-                                            </Border>
-                                        </ControlTemplate>
-                                    </ToggleButton.Template>
-                                </ToggleButton>
+        <Popup
+            AllowsTransparency="True"
+            IsOpen="{Binding IsChecked, ElementName=VideoToggleButton}"
+            Placement="Top"
+            PlacementTarget="{Binding ElementName=VideoToggleButton}"
+            StaysOpen="True"
+            VerticalOffset="-8">
+            <Border
+                Width="320"
+                Padding="20"
+                Background="#1E1E1E"
+                BorderBrush="#3A3A3A"
+                BorderThickness="1"
+                CornerRadius="12">
+                <StackPanel>
 
-                                <TextBlock
-                                    Margin="12,0,36,0"
-                                    VerticalAlignment="Center"
-                                    FontFamily="Segoe UI, Microsoft JhengHei UI, 微軟正黑體"
-                                    FontSize="13"
-                                    Foreground="#CCCCCC"
-                                    IsHitTestVisible="False"
-                                    Text="{Binding SelectedItem.DisplayName, RelativeSource={RelativeSource TemplatedParent}}" />
+                    <!--  標題  -->
+                    <TextBlock
+                        Margin="0,0,0,16"
+                        FontFamily="Segoe UI"
+                        FontSize="15"
+                        FontWeight="SemiBold"
+                        Foreground="#FFFFFF"
+                        Text="新增影片" />
 
-                                <Popup
-                                    x:Name="PART_Popup"
-                                    AllowsTransparency="True"
-                                    Focusable="False"
-                                    IsOpen="{TemplateBinding IsDropDownOpen}"
-                                    Placement="Bottom"
-                                    PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                                    PopupAnimation="Slide"
-                                    StaysOpen="False">
-                                    <Border
-                                        MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
-                                        Background="#2D2D30"
-                                        BorderBrush="#3F3F46"
+                    <!--  影片標題  -->
+                    <TextBlock
+                        Margin="0,0,0,6"
+                        FontFamily="Segoe UI"
+                        FontSize="12"
+                        Foreground="#AAAAAA"
+                        Text="標題" />
+                    <TextBox
+                        Margin="0,0,0,14"
+                        Padding="10,8"
+                        Background="#272727"
+                        BorderBrush="#3A3A3A"
+                        BorderThickness="1"
+                        CaretBrush="White"
+                        FontFamily="Segoe UI"
+                        FontSize="13"
+                        Foreground="#FFFFFF"
+                        Text="{Binding VideoTitle}" />
+
+                    <!--  描述  -->
+                    <TextBlock
+                        Margin="0,0,0,6"
+                        FontFamily="Segoe UI"
+                        FontSize="12"
+                        Foreground="#AAAAAA"
+                        Text="描述" />
+                    <TextBox
+                        Height="72"
+                        Margin="0,0,0,14"
+                        Padding="10,8"
+                        AcceptsReturn="True"
+                        Background="#272727"
+                        BorderBrush="#3A3A3A"
+                        BorderThickness="1"
+                        CaretBrush="White"
+                        FontFamily="Segoe UI"
+                        FontSize="13"
+                        Foreground="#FFFFFF"
+                        Text="{Binding VideoDescription}"
+                        TextWrapping="Wrap" />
+
+                    <!--  瀏覽權限  -->
+                    <TextBlock
+                        Margin="0,0,0,6"
+                        FontFamily="Segoe UI"
+                        FontSize="12"
+                        Foreground="#AAAAAA"
+                        Text="瀏覽權限" />
+                    <ComboBox
+                        Margin="0,0,0,16"
+                        Background="#121212"
+                        BorderBrush="#3A3A3A"
+                        BorderThickness="1"
+                        DisplayMemberPath="DisplayName"
+                        FontSize="13"
+                        Foreground="#121212"
+                        IsEditable="True"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding Status}"
+                        SelectedValue="{Binding VideoPrivacyStatus}"
+                        SelectedValuePath="Key">
+                        <ComboBox.Template>
+                            <ControlTemplate TargetType="ComboBox">
+                                <Grid>
+                                    <ToggleButton
+                                        x:Name="ToggleButton"
+                                        Height="42"
+                                        Background="#121212"
                                         BorderThickness="1"
-                                        CornerRadius="4">
-                                        <ScrollViewer Margin="1" SnapsToDevicePixels="True">
-                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
-                                        </ScrollViewer>
-                                    </Border>
-                                </Popup>
-                            </Grid>
-                        </ControlTemplate>
-                    </ComboBox.Template>
+                                        IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="4">
+                                                    <Path
+                                                        Margin="0,0,12,0"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Center"
+                                                        Data="M 0 0 L 4 4 L 8 0 Z"
+                                                        Fill="White" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+                                    <TextBlock
+                                        Margin="12,0,36,0"
+                                        VerticalAlignment="Center"
+                                        FontFamily="Segoe UI, Microsoft JhengHei UI, 微軟正黑體"
+                                        FontSize="13"
+                                        Foreground="#CCCCCC"
+                                        IsHitTestVisible="False"
+                                        Text="{Binding SelectedItem.DisplayName, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    <Popup
+                                        x:Name="PART_Popup"
+                                        AllowsTransparency="True"
+                                        Focusable="False"
+                                        IsOpen="{TemplateBinding IsDropDownOpen}"
+                                        Placement="Bottom"
+                                        PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        PopupAnimation="Slide"
+                                        StaysOpen="False">
+                                        <Border
+                                            MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                            Background="#2D2D30"
+                                            BorderBrush="#3F3F46"
+                                            BorderThickness="1"
+                                            CornerRadius="4">
+                                            <ScrollViewer Margin="1" SnapsToDevicePixels="True">
+                                                <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </ControlTemplate>
+                        </ComboBox.Template>
+                        <ComboBox.Style>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="FontFamily" Value="Segoe UI, Microsoft JhengHei UI, 微軟正黑體" />
+                                <Setter Property="FontSize" Value="13" />
+                                <Setter Property="Foreground" Value="#CCCCCC" />
+                                <Setter Property="Background" Value="#121212" />
+                                <Setter Property="ItemContainerStyle">
+                                    <Setter.Value>
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="FontFamily" Value="Segoe UI, Microsoft JhengHei UI, 微軟正黑體" />
+                                            <Setter Property="FontSize" Value="13" />
+                                            <Setter Property="Foreground" Value="#CCCCCC" />
+                                            <Setter Property="Padding" Value="12,10" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ComboBoxItem">
+                                                        <Border
+                                                            x:Name="itemBorder"
+                                                            Padding="{TemplateBinding Padding}"
+                                                            Background="#121212">
+                                                            <TextBlock Foreground="#CCCCCC" Text="{Binding DisplayName}" />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="itemBorder" Property="Background" Value="#3A3A3A" />
+                                                            </Trigger>
+                                                            <Trigger Property="IsSelected" Value="True">
+                                                                <Setter TargetName="itemBorder" Property="Background" Value="#3F51B5" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Style>
+                    </ComboBox>
 
-                    <ComboBox.Style>
-                        <Style TargetType="ComboBox">
-                            <Setter Property="FontFamily" Value="Segoe UI, Microsoft JhengHei UI, 微軟正黑體" />
-                            <Setter Property="FontSize" Value="13" />
-                            <Setter Property="Foreground" Value="#CCCCCC" />
-                            <Setter Property="Background" Value="#121212" />
-                            <Setter Property="ItemContainerStyle">
-                                <Setter.Value>
-                                    <Style TargetType="ComboBoxItem">
-                                        <Setter Property="FontFamily" Value="Segoe UI, Microsoft JhengHei UI, 微軟正黑體" />
-                                        <Setter Property="FontSize" Value="13" />
-                                        <Setter Property="Foreground" Value="#CCCCCC" />
-                                        <Setter Property="Padding" Value="12,10" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ComboBoxItem">
-                                                    <Border
-                                                        x:Name="itemBorder"
-                                                        Padding="{TemplateBinding Padding}"
-                                                        Background="#121212">
-                                                        <TextBlock Foreground="#CCCCCC" Text="{Binding DisplayName}" />
-                                                    </Border>
-                                                    <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter TargetName="itemBorder" Property="Background" Value="#3A3A3A" />
-                                                        </Trigger>
-                                                        <Trigger Property="IsSelected" Value="True">
-                                                            <Setter TargetName="itemBorder" Property="Background" Value="#3F51B5" />
-                                                        </Trigger>
-                                                    </ControlTemplate.Triggers>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ComboBox.Style>
-                </ComboBox>
-                <Button Command="{Binding SelectVideoCommand}" Content="{Binding SelectVideoBtnText}" />
-                <Button Command="{Binding UploadVideoCommand}" Content="確定" />
-            </StackPanel>
+                    <!--  選擇影片檔案  -->
+                    <Button
+                        Height="36"
+                        Margin="0,0,0,14"
+                        Command="{Binding SelectVideoCommand}"
+                        Content="{Binding SelectVideoBtnText}"
+                        Cursor="Hand"
+                        Style="{StaticResource SecondaryButtonStyle}" />
+
+                    <!--  操作按鈕  -->
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button
+                            Width="60"
+                            Height="34"
+                            Margin="0,0,8,0"
+                            Command="{Binding CancelUploadVideosCommand}"
+                            Content="取消"
+                            Cursor="Hand"
+                            Style="{StaticResource SecondaryButtonStyle}">
+                            <Button.Triggers>
+                                <EventTrigger RoutedEvent="Button.Click">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="VideoToggleButton" Storyboard.TargetProperty="IsChecked">
+                                                <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
+                                            </BooleanAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Button.Triggers>
+                        </Button>
+                        <Button
+                            Width="60"
+                            Height="34"
+                            Command="{Binding UploadVideoCommand}"
+                            Content="確定"
+                            Cursor="Hand"
+                            Style="{StaticResource SaveButtonStyle}" />
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
         </Popup>
     </Grid>
 </Page>
