@@ -24,21 +24,35 @@ namespace Youtube.Presenters
         public async Task GetMyPlaylistsRequest()
         {
             var playlist = await YoutubeContext.Playlist.GetAllAsync();
-            List<MemberCenterPlaylistDTO> dtos = new List<MemberCenterPlaylistDTO>();
-            foreach (var item in playlist.items)
+            var tasks = playlist.items.Select(async item =>
             {
                 var videos = await YoutubeContext.PlayListItem.GetAllAsync(item.id);
-                var playlistItems = videos.items.Select(x => new PlaylistItemVideo(x.snippet.thumbnails.medium.url, x.snippet.title, x.snippet.videoOwnerChannelTitle, x.snippet.resourceId.videoId, x.id));
+                var playlistItems = videos.items.Select(x => new PlaylistItemVideo(
+                    x.snippet.thumbnails.medium.url,
+                    x.snippet.title,
+                    x.snippet.videoOwnerChannelTitle,
+                    x.snippet.resourceId.videoId,
+                    x.id));
                 if (item.snippet.thumbnails.medium.url == "https://i.ytimg.com/img/no_thumbnail.jpg")
                 {
                     item.snippet.thumbnails.medium.url = "https://getparasol.com/wp-content/themes/parasol/images/sample.png";
                 }
-                dtos.Add(new MemberCenterPlaylistDTO(item.snippet.thumbnails.medium.url, item.snippet.title, item.snippet.description, item.status.privacyStatus, item.id, item.snippet.publishedAt, item.contentDetails.itemCount,
-                    new ObservableCollection<PlaylistItemVideo>(playlistItems), item.snippet.title, item.snippet.description, item.status.privacyStatus));
-            }
-            MemberCenterPlaylistsView.RenderPlaylists(dtos);
+                return new MemberCenterPlaylistDTO(
+                    item.snippet.thumbnails.medium.url,
+                    item.snippet.title,
+                    item.snippet.description,
+                    item.status.privacyStatus,
+                    item.id,
+                    item.snippet.publishedAt,
+                    item.contentDetails.itemCount,
+                    new ObservableCollection<PlaylistItemVideo>(playlistItems),
+                    item.snippet.title,
+                    item.snippet.description,
+                    item.status.privacyStatus);
+            });
+            var dtos = await Task.WhenAll(tasks);
+            MemberCenterPlaylistsView.RenderPlaylists(dtos.ToList());
         }
-
         public async Task UpdatePlaylistRequest(string playlistId, string playlistTitle, string playlistDescription, string playlistPrivacyStatus)
         {
             await YoutubeContext.Playlist.UpdateAsync(playlistId, playlistTitle, playlistDescription, playlistPrivacyStatus);

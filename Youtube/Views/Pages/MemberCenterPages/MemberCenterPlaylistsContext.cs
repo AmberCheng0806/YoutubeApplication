@@ -34,6 +34,7 @@ namespace Youtube.Views.Pages.MemberCenterPages
         public ICommand DeleteVideoCommamd { get; set; }
         public ICommand ClickVideoCommand { get; set; }
         public ICommand CreatePlaylistCommand { get; set; }
+        public ICommand CancelCreatePlaylistCommand { get; set; }
         private IMemberCenterPlaylistsPresenter MemberCenterPlaylistsPresenter { get; set; }
 
         public MemberCenterPlaylistsContext()
@@ -43,11 +44,7 @@ namespace Youtube.Views.Pages.MemberCenterPages
 
         public async void OnNavigatedTo(object[] parameter)
         {
-            var playlist = await YoutubeContext.Playlist.GetAllAsync();
-            foreach (var item in playlist.items)
-            {
-                await MemberCenterPlaylistsPresenter.GetMyPlaylistsRequest();
-            }
+            await MemberCenterPlaylistsPresenter.GetMyPlaylistsRequest();
             DeletePlaylistCommand = new RelayCommand<MemberCenterPlaylistModel>(async x =>
             {
                 await MemberCenterPlaylistsPresenter.DeletePlaylistRequest(x.PlaylistId);
@@ -63,6 +60,12 @@ namespace Youtube.Views.Pages.MemberCenterPages
                 x.PlaylistDescription = x.OriginalPlaylistDescription;
                 x.PlaylistPrivacyStatus = x.OriginalPlaylistPrivacy;
                 x.EditPlaylistModeVisibility = Visibility.Collapsed;
+            });
+            CancelCreatePlaylistCommand = new RelayCommand(() =>
+            {
+                PlaylistTitle = "";
+                PlaylistDescription = "";
+                PlaylistPrivacy = "public";
             });
             DeleteVideoCommamd = new RelayCommand<PlaylistItemVideo>(async x =>
             {
