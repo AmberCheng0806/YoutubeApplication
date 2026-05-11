@@ -62,11 +62,7 @@ namespace Youtube.Components.PaginationComponent
                 nameof(TotalCount),
                 typeof(int),
                 typeof(Pagination),
-                new PropertyMetadata((d, e) =>
-                {
-                    Pagination component = (Pagination)d;
-                    component.PaginationContext.TotalCount = (int)e.NewValue;
-                }));
+       new PropertyMetadata(null));
 
         public void Execute(PaginationDTO condition)
         {

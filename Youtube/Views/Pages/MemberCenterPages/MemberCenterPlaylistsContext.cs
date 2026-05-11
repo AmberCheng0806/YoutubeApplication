@@ -52,6 +52,9 @@ namespace Youtube.Views.Pages.MemberCenterPages
             SaveCommand = new RelayCommand<MemberCenterPlaylistModel>(async x =>
             {
                 await MemberCenterPlaylistsPresenter.UpdatePlaylistRequest(x.PlaylistId, x.PlaylistTitle, x.PlaylistDescription, x.PlaylistPrivacyStatus);
+                x.OriginalPlaylistTitle = x.PlaylistTitle;
+                x.OriginalPlaylistDescription = x.PlaylistDescription;
+                x.OriginalPlaylistPrivacy = x.PlaylistPrivacyStatus;
                 x.EditPlaylistModeVisibility = Visibility.Collapsed;
             });
             CancelCommand = new RelayCommand<MemberCenterPlaylistModel>(x =>
