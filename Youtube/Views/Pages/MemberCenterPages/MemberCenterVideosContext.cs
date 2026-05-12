@@ -77,7 +77,10 @@ namespace Youtube.Views.Pages.MemberCenterPages
                 x.PrivacyStatus = x.OriginalVideoPrivacy;
                 x.EditVideoModeVisibility = Visibility.Collapsed;
             });
-            ClickVideoCommand = new RelayCommand<string>(x => NavigationService.Navigate("VideoDetail", x));
+            ClickVideoCommand = new RelayCommand<string>(x =>
+            {
+                NavigationService.Navigate("VideoDetail", x);
+            });
             CancelUploadVideosCommand = new RelayCommand(() =>
             {
                 VideoTitle = "";

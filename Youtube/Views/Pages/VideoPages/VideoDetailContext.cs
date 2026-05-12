@@ -144,8 +144,6 @@ namespace Youtube.Views.Pages.VideoPages
                 }
             });
 
-            //CommentPresenter.LoadCommentsRequest(VideoId);
-
             AddCommentCommand = new RelayCommand<ReplyCommentContext>(x =>
             {
                 CommentPresenter.AddCommentRequest(VideoId, x.CommentText);

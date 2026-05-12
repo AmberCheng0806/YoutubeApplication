@@ -107,7 +107,13 @@
                         FontSize="22"
                         FontWeight="Bold"
                         Foreground="White"
-                        Text="YouTube Search" />
+                        Text="YouTube Search">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseLeftButtonUp">
+                                <i:InvokeCommandAction Command="{Binding GoHomeCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBlock>
 
                 </StackPanel>
 
@@ -217,9 +223,86 @@
             Height="1"
             Background="#303030" />
 
+        <!--  上下頁導覽按鈕  -->
+        <StackPanel
+            Grid.Row="2"
+            Margin="16,12,0,0"
+            VerticalAlignment="Top"
+            Panel.ZIndex="1"
+            Orientation="Horizontal"
+            Visibility="{Binding NavigationService.NavigationUIVisibility}">
+
+            <StackPanel.Resources>
+                <Style x:Key="NavButtonStyle" TargetType="Button">
+                    <Setter Property="Width" Value="36" />
+                    <Setter Property="Height" Value="36" />
+                    <Setter Property="Foreground" Value="#9FA8DA" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="#3F51B5" />
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="Cursor" Value="Hand" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#3F51B5" />
+                                        <Setter Property="Foreground" Value="White" />
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#303F9F" />
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.3" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </StackPanel.Resources>
+
+            <Button Command="{Binding GoBackCommand}" Style="{StaticResource NavButtonStyle}">
+                <Path
+                    Width="14"
+                    Height="14"
+                    Data="M9,2 L4,7 L9,12"
+                    Stretch="Uniform"
+                    Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                    StrokeEndLineCap="Round"
+                    StrokeLineJoin="Round"
+                    StrokeStartLineCap="Round"
+                    StrokeThickness="1.8" />
+            </Button>
+
+            <Button
+                Margin="8,0,0,0"
+                Command="{Binding GoForwardCommand}"
+                Style="{StaticResource NavButtonStyle}">
+                <Path
+                    Width="14"
+                    Height="14"
+                    Data="M5,2 L10,7 L5,12"
+                    Stretch="Uniform"
+                    Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                    StrokeEndLineCap="Round"
+                    StrokeLineJoin="Round"
+                    StrokeStartLineCap="Round"
+                    StrokeThickness="1.8" />
+            </Button>
+
+        </StackPanel>
         <Frame
             x:Name="PageContainer"
             Grid.Row="2"
-            ClipToBounds="True" />
+            ClipToBounds="True"
+            NavigationUIVisibility="Hidden" />
     </Grid>
 </Window>

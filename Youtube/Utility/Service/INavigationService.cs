@@ -10,5 +10,9 @@ namespace Youtube.Utility.Service
     public interface INavigationService
     {
         void Navigate(string pageKey, params object[] parameter);
+        void GoBack();
+        void GoForward();
+        void GoHome();
+        Visibility NavigationUIVisibility { get; set; }
     }
 }

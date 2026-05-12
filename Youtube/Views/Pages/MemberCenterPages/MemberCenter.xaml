@@ -76,7 +76,10 @@
         </Border>
 
         <!--  子頁面內容  -->
-        <Frame x:Name="MemberPageContainer" ClipToBounds="True" />
+        <Frame
+            x:Name="MemberPageContainer"
+            ClipToBounds="True"
+            NavigationUIVisibility="Hidden" />
 
     </StackPanel>
 </Page>
