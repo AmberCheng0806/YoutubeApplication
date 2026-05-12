@@ -75,6 +75,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -217,15 +218,10 @@
             </Grid>
         </Border>
 
-        <!--  分隔線  -->
-        <Border
-            Grid.Row="1"
-            Height="1"
-            Background="#303030" />
 
         <!--  上下頁導覽按鈕  -->
         <StackPanel
-            Grid.Row="2"
+            Grid.Row="1"
             Margin="16,12,0,0"
             VerticalAlignment="Top"
             Panel.ZIndex="1"
@@ -299,9 +295,17 @@
             </Button>
 
         </StackPanel>
+
+
+        <!--  分隔線  -->
+        <Border
+            Grid.Row="2"
+            Height="1"
+            Background="#303030" />
         <Frame
             x:Name="PageContainer"
-            Grid.Row="2"
+            Grid.Row="3"
+            Margin="0,10,0,0"
             ClipToBounds="True"
             NavigationUIVisibility="Hidden" />
     </Grid>
