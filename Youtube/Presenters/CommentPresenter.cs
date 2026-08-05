@@ -83,20 +83,6 @@ namespace Youtube.Presenters
                  item.IsLiked = isLiked;
                  CommentView.UpdateCommentRating(item);
              }).ToList();
-            //foreach (var item in commentItemDTOs)
-            //{
-            //    var commentDetail = await youtubeContext.Comment.GetCommentByCommentIdAsync(item.Id);
-            //    bool isLiked = commentDetail.items[0].snippet.topLevelComment.snippet.viewerRating == "none" ? false : true;
-            //    item.IsLiked = isLiked;
-            //}
-
-            //Task.Run(async () =>
-            //{
-            //    await Task.WhenAll(dtos);
-            //    CommentView.UpdateCommentsRating(commentItemDTOs);
-            //});
-
-
         }
 
         public async Task DeleteCommentRequest(DeleteCommentDTO deleteCommentDTO)
@@ -117,8 +103,6 @@ namespace Youtube.Presenters
             var comment = new CommentItemDTO(updateComment.snippet.authorDisplayName, commentText, commentText, updateComment.id, updateComment.snippet.authorProfileImageUrl,
             updateComment.snippet.likeCount, false, updateComment.snippet.publishedAt, 0, new ObservableCollection<CommentItem>(), true, "", true);
             CommentView.EditComment(commentId, commentText);
-            //CommentView.DeleteComment(new DeleteCommentDTO(commentId,updateComment.snippet.));
-            //CommentView.AddComment(comment);
         }
 
         public async Task EditReplyCommentRequest(string parentId, string commentId, string commentText)
@@ -128,8 +112,6 @@ namespace Youtube.Presenters
             var comment = new CommentItemDTO(updateComment.snippet.authorDisplayName, commentText, commentText, updateComment.id, updateComment.snippet.authorProfileImageUrl,
             updateComment.snippet.likeCount, false, updateComment.snippet.publishedAt, 0, new ObservableCollection<CommentItem>(), true, parentId, true);
             CommentView.EditReplyComment(parentId, commentId, commentText);
-            //CommentView.DeleteReplyComment(parentId, commentId);
-            //CommentView.AddReplyComment(parentId, comment);
         }
 
     }

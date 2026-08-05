@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IoC_Container.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,12 +20,16 @@ namespace Youtube.Views.Pages.MemberCenterPages
     /// <summary>
     /// MemberCenter.xaml 的互動邏輯
     /// </summary>
+    [Singleton]
     public partial class MemberCenter : Page
     {
-        public MemberCenter()
+        public MemberCenter(MemberCenterContext memberCenterContext)
         {
             InitializeComponent();
-            DataContext = new MemberCenterContext(new Utility.Service.NavigationService(MemberPageContainer));
+            //INavigationService navigationService = new Utility.Service.NavigationService();
+            memberCenterContext.MemberNavigationService.SetFrame(MemberPageContainer);
+            //App.NavigationService.SetFrame(MemberPageContainer);
+            DataContext = memberCenterContext;
         }
     }
 }

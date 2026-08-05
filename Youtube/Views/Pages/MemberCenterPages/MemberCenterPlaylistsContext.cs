@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using IoC_Container.Attributes;
+using IoC_Container.Factory;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
@@ -18,15 +20,16 @@ using static Youtube.Contracts.MemberCenterPlaylistsContract;
 
 namespace Youtube.Views.Pages.MemberCenterPages
 {
+    [Singleton]
     [AddINotifyPropertyChangedInterface]
-    internal class MemberCenterPlaylistsContext : INavigationAware, IMemberCenterPlaylistsView
+    public class MemberCenterPlaylistsContext : INavigationAware, IMemberCenterPlaylistsView
     {
         public ObservableCollection<MemberCenterPlaylistModel> Playlists { get; set; } = new ObservableCollection<MemberCenterPlaylistModel>();
         public YoutubeContext YoutubeContext { get; set; } = new YoutubeContext();
         public string PlaylistTitle { get; set; } = "";
         public string PlaylistDescription { get; set; } = "";
         public string PlaylistPrivacy { get; set; } = "public";
-        public INavigationService NavigationService { get; set; } = App.NavigationService;
+        public INavigationService NavigationService { get; set; }
         public List<OptionsViewModel> Status { get; set; } = new List<OptionsViewModel>() { new OptionsViewModel("public", "公開"), new OptionsViewModel("unlisted", "不公開"), new OptionsViewModel("private", "私人") };
         public ICommand DeletePlaylistCommand { get; set; }
         public ICommand SaveCommand { get; set; }
@@ -37,9 +40,10 @@ namespace Youtube.Views.Pages.MemberCenterPages
         public ICommand CancelCreatePlaylistCommand { get; set; }
         private IMemberCenterPlaylistsPresenter MemberCenterPlaylistsPresenter { get; set; }
 
-        public MemberCenterPlaylistsContext()
+        public MemberCenterPlaylistsContext([GetInstance("main")] INavigationService navigationService, IPresenterFactory presenterFactory)
         {
-            MemberCenterPlaylistsPresenter = new MemberCenterPlaylistsPresenter(this);
+            MemberCenterPlaylistsPresenter = presenterFactory.Create<IMemberCenterPlaylistsPresenter>(this);
+            NavigationService = navigationService;
         }
 
         public async void OnNavigatedTo(object[] parameter)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IoC_Container.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -27,16 +28,14 @@ namespace Youtube.Views
     /// <summary>
     /// MainWindow.xaml 的互動邏輯
     /// </summary>
+    [Singleton]
     public partial class MainWindow : Window
     {
-        MainWindowContext MainWindowView { get; set; }
-        public MainWindow()
+        public MainWindow(MainWindowContext mainWindowContext)
         {
             InitializeComponent();
-
-            App.NavigationService = new NavigationService(PageContainer);
-            MainWindowView = new MainWindowContext(App.NavigationService);
-            DataContext = MainWindowView;
+            mainWindowContext.NavigationService.SetFrame(PageContainer);
+            DataContext = mainWindowContext;
         }
     }
 }

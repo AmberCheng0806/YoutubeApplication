@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -28,30 +29,37 @@ namespace Youtube.Components.PlayListComponent
         public PlayList()
         {
             InitializeComponent();
+
         }
         public ICommand Command
         {
             get => (ICommand)GetValue(CommandProperty);
             set => SetValue(CommandProperty, value);
         }
+        //public static readonly DependencyProperty CommandProperty =
+        // DependencyProperty.Register(
+        //     nameof(Command),
+        //     typeof(ICommand),
+        //     typeof(PlayList),
+        //     new PropertyMetadata(((d, e) =>
+        //     {
+        //         PlayList playlist = (PlayList)d;
+        //         PlaylistItem item = (PlaylistItem)playlist.DataContext;
+        //         item.SaveCommand = (ICommand)e.NewValue;
+        //})));
         public static readonly DependencyProperty CommandProperty =
-         DependencyProperty.Register(
-             nameof(Command),
-             typeof(ICommand),
-             typeof(PlayList),
-             new PropertyMetadata(((d, e) =>
-             {
-                 PlayList playlist = (PlayList)d;
-                 PlaylistItem item = (PlaylistItem)playlist.DataContext;
-                 item.SaveCommand = (ICommand)e.NewValue;
-             })));
+     DependencyProperty.Register(
+         nameof(Command),
+         typeof(ICommand),
+         typeof(PlayList),
+         new PropertyMetadata(null));
 
-        //public void Execute(PlaylistItem condition)
-        //{
-        //    if (Command?.CanExecute(condition) == true)
-        //    {
-        //        Command.Execute(condition);
-        //    }
-        //}
+        public void Execute(PlaylistItem condition)
+        {
+            if (Command?.CanExecute(condition) == true)
+            {
+                Command.Execute(condition);
+            }
+        }
     }
 }

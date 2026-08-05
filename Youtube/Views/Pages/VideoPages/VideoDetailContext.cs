@@ -1,5 +1,7 @@
 ﻿//using Microsoft.Toolkit.Uwp.Notifications;
 using CommunityToolkit.Mvvm.Messaging;
+using IoC_Container.Attributes;
+using IoC_Container.Factory;
 using Microsoft.Toolkit.Uwp.Notifications;
 using PropertyChanged;
 using System;
@@ -26,8 +28,9 @@ using static Youtube.Contracts.VideoDetailContract;
 
 namespace Youtube.Views.Pages.VideoPages
 {
+    [Singleton]
     [AddINotifyPropertyChangedInterface]
-    internal class VideoDetailContext : INavigationAware, ICommentView, IVideoDetailView
+    public class VideoDetailContext : INavigationAware, ICommentView, IVideoDetailView
     {
         public string VideoId { get; set; }
         public string VideoTitle { get; set; }
@@ -70,17 +73,13 @@ namespace Youtube.Views.Pages.VideoPages
         public ICommand EditCommentCommand { get; set; }
         public ICommand CancelCreatePlaylistCommand { get; set; }
         public ICommand CreatePlaylistCommand { get; set; }
-        public VideoDetailContext()
+        public VideoDetailContext(IPresenterFactory presenterFactory)
         {
-            CommentPresenter = new CommentPresenter(this);
+            CommentPresenter = presenterFactory.Create<ICommentPresenter>(this);
             VideoDetailPresenter = new VideoDetailPresenter(this);
         }
         public async void OnNavigatedTo(object[] parameter)
         {
-
-            // textBox.Text = "Hello"
-            // Title = "Hello"
-
             VideoId = parameter[0] as string;
             await VideoDetailPresenter.GetVideoDetailRequest(VideoId);
             await Task.WhenAll(VideoDetailPresenter.GetPlayListRequest(), CommentPresenter.LoadCommentsRequest(VideoId));
@@ -149,6 +148,10 @@ namespace Youtube.Views.Pages.VideoPages
                 CommentPresenter.AddCommentRequest(VideoId, x.CommentText);
                 x.CommentText = "";
             });
+
+            // 先全部清除，避免重複
+            WeakReferenceMessenger.Default.UnregisterAll(this);
+
             WeakReferenceMessenger.Default.Register<CommentItemDTO>(this, (sender, dto) =>
             {
                 TotalComments++;

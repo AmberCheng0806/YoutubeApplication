@@ -26,23 +26,6 @@ namespace Youtube.Components.ReplyCommentComponent
             InitializeComponent();
             DataContext = new ReplyCommentContext();
         }
-        //public string CommentText
-        //{
-        //    get => (string)GetValue(CommandTextProperty);
-        //    set => SetValue(CommandTextProperty, value);
-        //}
-
-        //public static readonly DependencyProperty CommandTextProperty =
-        //    DependencyProperty.Register(
-        //        nameof(CommentText),
-        //        typeof(string),
-        //        typeof(ReplyComment),
-        //        new PropertyMetadata((d, e) =>
-        //        {
-        //            ReplyComment replyComment = (ReplyComment)d;
-        //            ReplyCommentContext replyCommentContext = (ReplyCommentContext)replyComment.DataContext;
-        //            replyCommentContext.CommentText = (string)e.NewValue;
-        //        }));
         public string ParentId
         {
             get => (string)GetValue(ParentIdProperty);

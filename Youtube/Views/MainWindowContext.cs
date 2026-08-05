@@ -1,4 +1,5 @@
-﻿using PropertyChanged;
+﻿using IoC_Container.Attributes;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,8 +22,9 @@ using static Youtube.Contracts.SearchContract;
 using Mapper = AutoMapper.AutoMapper;
 namespace Youtube.Views
 {
+    [Singleton]
     [AddINotifyPropertyChangedInterface]
-    internal class MainWindowContext
+    public class MainWindowContext
     {
         public string SearchText { get; set; }
         public string MyChannelImgUrl { get; set; } = App.ChannelImg;
@@ -37,7 +39,7 @@ namespace Youtube.Views
 
         public INavigationService NavigationService { get; set; }
 
-        public MainWindowContext(INavigationService navigationService)
+        public MainWindowContext([GetInstance("main")] INavigationService navigationService)
         {
             NavigationService = navigationService;
             SearchConditionCommand = new RelayCommand<SearchFilterDTO>(x => { this.SearchFilter = x; IsFilterConditionPopup = false; });

@@ -25,12 +25,10 @@ namespace Youtube.Components.PaginationComponent
     [AddINotifyPropertyChangedInterface]
     public partial class Pagination : UserControl
     {
-        PaginationContext PaginationContext { get; set; }
         public Pagination()
         {
             InitializeComponent();
-            PaginationContext = new PaginationContext(this);
-            DataContext = PaginationContext;
+            DataContext = (PaginationContext)App.ServiceProvider.GetService(typeof(PaginationContext));
         }
 
         public ICommand Command
@@ -53,7 +51,12 @@ namespace Youtube.Components.PaginationComponent
                 nameof(Command),
                 typeof(ICommand),
                 typeof(Pagination),
-                new PropertyMetadata(null));
+                new PropertyMetadata((d, e) =>
+                {
+                    Pagination pagination = (Pagination)d;
+                    PaginationContext paginationContext = (PaginationContext)pagination.DataContext;
+                    paginationContext.ChangePaginationIndexCommand = (ICommand)e.NewValue;
+                }));
 
 
         public static readonly DependencyProperty CommandProperty2 =
@@ -67,11 +70,6 @@ namespace Youtube.Components.PaginationComponent
            PaginationContext paginationContext = (PaginationContext)pagination.DataContext;
            paginationContext.TotalCount = (int)e.NewValue;
        }));
-
-        public void Execute(PaginationDTO condition)
-        {
-            Command.Execute(condition);
-        }
     }
 }
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Youtube.Presenters.Models
 {
-    internal class MemberCenterVideoDTO
+    public class MemberCenterVideoDTO
     {
         public string VideoImg { get; set; }
         public string VideoTitle { get; set; }

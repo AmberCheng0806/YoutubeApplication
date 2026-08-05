@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Youtube.Presenters.Models
 {
-    internal class PlaylistItemDTO
+    public class PlaylistItemDTO
     {
         public string Id { get; set; }
         public string Title { get; set; }

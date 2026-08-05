@@ -28,7 +28,7 @@
 
         <Border.InputBindings>
             <MouseBinding
-                Command="{Binding SaveCommand}"
+                Command="{Binding Command, RelativeSource={RelativeSource AncestorType=UserControl}}"
                 CommandParameter="{Binding}"
                 MouseAction="LeftClick" />
         </Border.InputBindings>

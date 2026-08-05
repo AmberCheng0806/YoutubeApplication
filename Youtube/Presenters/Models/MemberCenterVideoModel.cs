@@ -11,7 +11,7 @@ using System.Windows.Input;
 namespace Youtube.Presenters.Models
 {
     [AddINotifyPropertyChangedInterface]
-    internal class MemberCenterVideoModel
+    public class MemberCenterVideoModel
     {
         public string VideoImg { get; set; }
         public string VideoTitle { get; set; }

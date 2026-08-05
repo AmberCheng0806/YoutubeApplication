@@ -8,7 +8,7 @@ using Youtube.Components.CommentComponent;
 
 namespace Youtube.Presenters.Models
 {
-    internal class CommentItemDTO
+    public class CommentItemDTO
     {
         public string AuthorName { get; set; }
         public string CommentText { get; set; }

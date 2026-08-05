@@ -22,7 +22,6 @@ namespace Youtube.Components.PlayListComponent
             IsAddedVideo = isAddedVideo;
             PlayListItemVideoId = playListItemVideoId;
         }
-        public ICommand SaveCommand { get; set; }
         public PlaylistItem() { }
     }
 }

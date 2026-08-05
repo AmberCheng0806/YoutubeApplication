@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using IoC_Container.Attributes;
+using IoC_Container.Factory;
 using Microsoft.Win32;
 using PropertyChanged;
 using System;
@@ -18,8 +20,9 @@ using static Youtube.Contracts.MemberCenterVideosContract;
 
 namespace Youtube.Views.Pages.MemberCenterPages
 {
+    [Singleton]
     [AddINotifyPropertyChangedInterface]
-    internal class MemberCenterVideosContext : INavigationAware, IMemberCenterVideosView
+    public class MemberCenterVideosContext : INavigationAware, IMemberCenterVideosView
     {
         public ObservableCollection<MemberCenterVideoModel> Videos { get; set; } = new ObservableCollection<MemberCenterVideoModel>();
         public YoutubeContext YoutubeContext { get; set; } = new YoutubeContext();
@@ -29,7 +32,7 @@ namespace Youtube.Views.Pages.MemberCenterPages
         public string VideoUrl { get; set; } = "";
         public string SelectVideoBtnText { get; set; } = "選擇影片";
         public List<OptionsViewModel> Status { get; set; } = new List<OptionsViewModel>() { new OptionsViewModel("public", "公開"), new OptionsViewModel("unlisted", "不公開"), new OptionsViewModel("private", "私人") };
-        public INavigationService NavigationService { get; set; } = App.NavigationService;
+        public INavigationService NavigationService { get; set; }
         public ICommand SelectVideoCommand { get; set; }
         public ICommand UploadVideoCommand { get; set; }
         public ICommand DeleteVideoCommand { get; set; }
@@ -39,9 +42,10 @@ namespace Youtube.Views.Pages.MemberCenterPages
         public ICommand CancelUploadVideosCommand { get; set; }
         private IMemberCenterVideosPresenter memberCenterVideosPresenter { get; set; }
 
-        public MemberCenterVideosContext()
+        public MemberCenterVideosContext([GetInstance("main")] INavigationService navigationService, IPresenterFactory presenterFactory)
         {
-            memberCenterVideosPresenter = new MemberCenterVideosPresenter(this);
+            memberCenterVideosPresenter = presenterFactory.Create<IMemberCenterVideosPresenter>(this);
+            NavigationService = navigationService;
         }
 
         public async void OnNavigatedTo(object[] parameter)

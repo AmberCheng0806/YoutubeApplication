@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IoC_Container.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -24,10 +25,10 @@ namespace Youtube.Views.Pages.VideoPages
     /// <summary>
     /// VideoDetail.xaml 的互動邏輯
     /// </summary>
+    [Singleton]
     public partial class VideoDetail : Page
     {
-        VideoDetailContext videoDetailContext { get; set; } = new VideoDetailContext();
-        public VideoDetail()
+        public VideoDetail(VideoDetailContext videoDetailContext)
         {
             InitializeComponent();
             DataContext = videoDetailContext;

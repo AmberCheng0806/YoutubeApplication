@@ -12,7 +12,7 @@ using Youtube.Utility;
 namespace Youtube.Presenters.Models
 {
     [AddINotifyPropertyChangedInterface]
-    internal class MemberCenterPlaylistModel
+    public class MemberCenterPlaylistModel
     {
         public string PlaylistImg { get; set; } = "https://i.ytimg.com/img/no_thumbnail.jpg";
         public string PlaylistTitle { get; set; }

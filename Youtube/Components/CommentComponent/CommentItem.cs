@@ -12,7 +12,7 @@ using Youtube.Utility;
 namespace Youtube.Components.CommentComponent
 {
     [AddINotifyPropertyChangedInterface]
-    internal class CommentItem
+    public class CommentItem
     {
         public string AuthorName { get; set; }
         public string CommentText { get; set; }

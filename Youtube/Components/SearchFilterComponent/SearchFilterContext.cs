@@ -1,4 +1,5 @@
-﻿using PropertyChanged;
+﻿using IoC_Container.Attributes;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,6 +14,7 @@ using Youtube.Utility;
 
 namespace Youtube.Components.SearchFilterComponent
 {
+    [Singleton]
     [AddINotifyPropertyChangedInterface]
     internal class SearchFilterContext
     {
@@ -23,10 +25,11 @@ namespace Youtube.Components.SearchFilterComponent
 
         public ICommand CheckCommand { get; set; }
         public ICommand ApplyCommand { get; set; }
+        public ICommand SearchConditionCommand { get; set; }
         public Visibility FilterVisibility { get; set; }
 
 
-        public SearchFilterContext(SearchFilter searchFilter)
+        public SearchFilterContext()
         {
             Types = new ObservableCollection<OptionsViewModel>()
             {
@@ -68,7 +71,7 @@ namespace Youtube.Components.SearchFilterComponent
                 string videoDuration = Durations.Where(x => x.IsChecked).Select(x => x.Key).FirstOrDefault();
                 VideoType videoCategoryId = Categories.Where(x => x.IsChecked).Select(x => (VideoType)Enum.Parse(typeof(VideoType), x.Key)).FirstOrDefault();
                 var dto = new SearchFilterDTO(type, publishedAfter, videoDuration, videoCategoryId);
-                searchFilter.Execute(dto);
+                SearchConditionCommand.Execute(dto);
             });
         }
     }

@@ -1,6 +1,4 @@
-﻿using IoC_Container;
-using IoC_Container.Attributes;
-using PropertyChanged;
+﻿using IoC_Container.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,20 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Youtube.Components.PaginationComponent;
 using Youtube.Views.Pages;
-using Page = System.Windows.Controls.Page;
 
 namespace Youtube.Utility.Service
 {
-    [Singleton("main")]
-    [AddINotifyPropertyChangedInterface]
-    internal class NavigationService : INavigationService
+    [Singleton("member")]
+    public class MemberNavigationService : INavigationService
     {
         public Frame Frame { get; set; }
-        public Visibility NavigationUIVisibility { get; set; } = Visibility.Collapsed;
         private IServiceProvider ServiceProvider { get; set; }
-        public NavigationService(IServiceProvider serviceProvider)
+        public Visibility NavigationUIVisibility { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public MemberNavigationService(IServiceProvider serviceProvider)
         {
             ServiceProvider = serviceProvider;
         }
@@ -38,19 +34,16 @@ namespace Youtube.Utility.Service
         {
             Page page = e.Content as Page;
             if (page == null) return;
-            if (page.Title.Contains("VideoDetail") || page.Title.Contains("VideoSearch")) { NavigationUIVisibility = Visibility.Visible; }
-            else { NavigationUIVisibility = Visibility.Collapsed; };
         }
 
         public void Navigate(string pageKey, params object[] parameter)
         {
+            Debug.WriteLine(Frame.GetHashCode());
             Page currentPage = null;
             Type type = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(x => x.Name.Contains(pageKey) && x.BaseType == typeof(Page));
             if (type == null) throw new Exception("Page not found");
             currentPage = (Page)ServiceProvider.GetService(type);
             if (currentPage == null) { currentPage = (Page)Activator.CreateInstance(type); }
-            if (pageKey == "VideoDetail" || pageKey == "VideoSearch") { NavigationUIVisibility = Visibility.Visible; }
-            else { NavigationUIVisibility = Visibility.Collapsed; };
             if (currentPage.DataContext is INavigationAware aware)
             {
                 aware.OnNavigatedTo(parameter);

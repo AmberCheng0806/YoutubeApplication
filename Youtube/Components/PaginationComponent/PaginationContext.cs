@@ -1,4 +1,6 @@
-﻿using PropertyChanged;
+﻿using IoC_Container.Attributes;
+using IoC_Container.Factory;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,11 +14,11 @@ using static Youtube.Contracts.PaginationContract;
 
 namespace Youtube.Components.PaginationComponent
 {
+    [Singleton]
     [AddINotifyPropertyChangedInterface]
     internal class PaginationContext : IPaginationView
     {
         private IPaginationPresenter presenter;
-        private Pagination Pagination { get; set; }
         public int PageIndex { get; set; } = 1;
 
         public int CountPerPage { get; set; } = 5;
@@ -43,28 +45,12 @@ namespace Youtube.Components.PaginationComponent
         public ICommand JumpNextPageCommand { get; }
         public ICommand ChangePageCommand { get; }
         public ICommand ChangeCountPerPageCommand { get; }
+        public ICommand ChangePaginationIndexCommand { get; set; }
 
-        public PaginationContext(Pagination pagination)
+        public PaginationContext(IPresenterFactory presenterFactory)
         {
-            presenter = new PaginationPresenter(this);
-            Pagination = pagination;
-
-            PrevPageCommand = new RelayCommand(presenter.PrevPageRequest, () => HasPreviousPage);
-            NextPageCommand = new RelayCommand(presenter.NextPageRequest, () => HasNextPage);
-            JumpPrevPageCommand = new RelayCommand(presenter.JumpPrevPageRequest, () => HasPreviousPage);
-            JumpNextPageCommand = new RelayCommand(presenter.JumpNextPageRequest, () => HasNextPage);
-            ChangePageCommand = new RelayCommand<int>(x => { presenter.ChangePageRequest(x); });
-            ChangeCountPerPageCommand = new RelayCommand<int>(x =>
-            {
-                CountPerPage = x;
-                presenter.ChangeCountPerPageRequest(x);
-            });
-        }
-
-        public PaginationContext()
-        {
-            presenter = new PaginationPresenter(this);
-
+            //presenter = new PaginationPresenter(this);
+            presenter = presenterFactory.Create<IPaginationPresenter>(this);
             PrevPageCommand = new RelayCommand(presenter.PrevPageRequest, () => HasPreviousPage);
             NextPageCommand = new RelayCommand(presenter.NextPageRequest, () => HasNextPage);
             JumpPrevPageCommand = new RelayCommand(presenter.JumpPrevPageRequest, () => HasPreviousPage);
@@ -79,7 +65,12 @@ namespace Youtube.Components.PaginationComponent
 
         public void RenderPages(List<Page> pages)
         {
-            Pages = new ObservableCollection<Page>(pages);
+            Pages.Clear();
+            foreach (var item in pages)
+            {
+                Pages.Add(item);
+            }
+            int a = 0;
         }
 
         public void UpdatePageIndex(int index)
@@ -94,7 +85,7 @@ namespace Youtube.Components.PaginationComponent
 
         public void PageIndexChanged(PaginationDTO page)
         {
-            Pagination.Execute(page);
+            ChangePaginationIndexCommand.Execute(page);
         }
     }
 }

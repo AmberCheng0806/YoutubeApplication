@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Youtube.Components.PaginationComponent;
 using Youtube.Views;
 
 namespace Youtube.Components.SearchFilterComponent
@@ -24,7 +25,7 @@ namespace Youtube.Components.SearchFilterComponent
         public SearchFilter()
         {
             InitializeComponent();
-            DataContext = new SearchFilterContext(this);
+            DataContext = App.ServiceProvider.GetService(typeof(SearchFilterContext));
         }
         public ICommand Command
         {
@@ -37,7 +38,12 @@ namespace Youtube.Components.SearchFilterComponent
                 nameof(Command),
                 typeof(ICommand),
                 typeof(SearchFilter),
-                new PropertyMetadata(null));
+                new PropertyMetadata((d, e) =>
+                {
+                    SearchFilter searchFilter = (SearchFilter)d;
+                    SearchFilterContext searchFilterContext = (SearchFilterContext)searchFilter.DataContext;
+                    searchFilterContext.SearchConditionCommand = (ICommand)e.NewValue;
+                }));
 
         public void Execute(SearchFilterDTO condition)
         {

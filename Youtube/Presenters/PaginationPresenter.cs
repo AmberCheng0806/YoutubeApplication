@@ -14,7 +14,6 @@ namespace Youtube.Presenters
         public int TotalCount { get; set; } = 173;
         List<Page> Pages { get; set; } = new List<Page>();
         public int PageIndex { get; set; } = 1;
-        public int DisplayPageNumber { get; set; } = 10;
         public int PageCount { get; set; }
         public int CountPerPage { get; set; } = 5;
         public PaginationPresenter(IPaginationView paginationView)
@@ -26,6 +25,7 @@ namespace Youtube.Presenters
         {
             this.CountPerPage = CountPerPage;
             this.TotalCount = TotalCount;
+            PageIndex = 1;
             CreatePages();
             PaginationView.RenderPages(Pages);
         }
@@ -36,11 +36,11 @@ namespace Youtube.Presenters
             int page = (int)Math.Ceiling((double)(TotalCount / (CountPerPage * 1.0)));
             PageCount = page;
             PaginationView.UpdatePageCount(PageCount);
-            PageIndex = Math.Min(PageCount, PageIndex);
+            PageIndex = PageCount == 0 ? 1 : Math.Min(PageCount, PageIndex);
             PaginationView.UpdatePageIndex(PageIndex);
-            int start = (int)(Math.Floor((double)((PageIndex - 1) / DisplayPageNumber)) * DisplayPageNumber + 1);
-            int end = start + DisplayPageNumber - 1;
-            end = end >= page ? page : end;
+            int start = 1;
+            int end = start + PageCount - 1;
+            end = end >= start ? end : start;
             for (int i = start; i <= end; i++)
             {
                 Pages.Add(new Page(i, false));
@@ -74,7 +74,7 @@ namespace Youtube.Presenters
 
         public void JumpPrevPageRequest()
         {
-            PageIndex = Math.Max(1, PageIndex - 10);
+            PageIndex = Math.Max(1, PageIndex - 5);
             CreatePages();
             PaginationView.RenderPages(Pages);
             PaginationView.PageIndexChanged(new PaginationDTO(PageIndex, CountPerPage));
@@ -82,7 +82,7 @@ namespace Youtube.Presenters
 
         public void JumpNextPageRequest()
         {
-            PageIndex = Math.Min(PageCount, PageIndex + 10);
+            PageIndex = Math.Min(PageCount, PageIndex + 5);
             CreatePages();
             PaginationView.RenderPages(Pages);
             PaginationView.PageIndexChanged(new PaginationDTO(PageIndex, CountPerPage));

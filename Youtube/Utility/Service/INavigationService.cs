@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Youtube.Utility.Service
 {
@@ -14,5 +15,6 @@ namespace Youtube.Utility.Service
         void GoForward();
         void GoHome();
         Visibility NavigationUIVisibility { get; set; }
+        void SetFrame(Frame frame);
     }
 }
