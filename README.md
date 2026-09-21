@@ -1,10 +1,34 @@
 # YouTube Desktop Application
 
-以 **C# / WPF** 開發的 YouTube 桌面應用程式，整合 **YouTube Data API v3** 與 **Google OAuth 2.0**，實作影片搜尋、播放、訂閱、評分、留言、播放清單與會員相關功能。
-
-本專案除了功能實作，也著重於桌面應用程式的架構設計，將 **UI、Presenter、API 存取與 HTTP 通訊層**進行職責拆分，並實作可重複使用的 WPF 元件、Navigation Service、OAuth 驗證流程與自訂 HTTP Utility。
+以 **C# / WPF** 開發的 YouTube 桌面應用程式，整合 **YouTube Data API v3** 與 **Google OAuth 2.0**，實作影片搜尋、播放、訂閱、評分、留言與播放清單等功能。
 
 > A WPF desktop client integrating YouTube Data API v3, OAuth 2.0, reusable UI components, and layered application architecture.
+
+# Demo
+
+### 專案介面
+
+<p align="center">
+  <img src="./docs/images/youtube-demo.png"
+       alt="YouTube Desktop Application"
+       width="900">
+</p>
+
+> 後續將補充搜尋、篩選、影片播放、訂閱與播放清單等功能操作畫面。
+
+---
+
+## 技術摘要
+
+- **Language:** C#
+- **UI:** WPF / XAML
+- **API:** YouTube Data API v3
+- **Authentication:** Google OAuth 2.0
+- **HTTP:** HttpClient / DelegatingHandler
+- **Video:** Microsoft WebView2
+- **Architecture:** Presenter / View Contract
+- **Navigation:** Custom Navigation Service
+- **UI Design:** Reusable UserControl
 
 ---
 
@@ -517,7 +541,7 @@ VideoCard
 
 ---
 
-# 使用技術
+# 技術細節
 
 | 類別 | 技術 |
 |---|---|
@@ -639,20 +663,6 @@ DI Container
 - 方便替換 Implementation
 - 管理 Singleton / Transient Lifetime
 - 讓 View 不需要自行建立 Presenter
-
----
-
-# Demo
-
-### 專案介面
-
-<p align="center">
-  <img src="./docs/images/youtube-demo.png"
-       alt="YouTube Desktop Application"
-       width="900">
-</p>
-
-> 後續將補充搜尋、篩選、影片播放、訂閱與播放清單等功能操作畫面。
 
 ---
 
